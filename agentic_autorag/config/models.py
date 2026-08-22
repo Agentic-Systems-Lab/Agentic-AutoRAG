@@ -1060,7 +1060,7 @@ class ExaminerConfig(BaseModel):
     chunk_relevance_min_run: int = Field(default=5, ge=1)
 
     # Per-chunk word budget the examiner's HybridChunker uses for merge/split
-    # decisions. 1200 fits the composition LLM context comfortably and exceeds
+    # decisions. 1000 fits the composition LLM context comfortably and exceeds
     # the max_seq_length of every embedder shipped in the default search space
     # except small 512-token models — those silently truncate, which is the
     # documented tradeoff (pair selection sees the chunk lead; LLM sees the
@@ -1794,6 +1794,15 @@ class OpenEndedQuestion(BaseModel):
 
     @property
     def num_hops(self) -> int:
+        # TODO: source_spans is overloaded. Its length stands in for reasoning
+        # depth (this property), gates the >=2-hop sufficiency and
+        # decomposability checks in exam_validator, and defines the
+        # retrieval-attribution targets in the evaluator. Those roles diverge:
+        # facts that sit adjacent in the text collapse into one stored span, so
+        # a bridge- or comparison-typed question can count as single-hop and
+        # skip the sufficiency oracle. A refactor should decouple reasoning
+        # arity from stored excerpts (e.g. fact- or chunk-based hop counts)
+        # rather than patch this length.
         return len(self.source_spans)
 
     @property

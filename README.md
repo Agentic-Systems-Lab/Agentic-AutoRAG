@@ -4,36 +4,15 @@
 
 # Agentic AutoRAG
 
-Agentic AutoRAG is a reasoning-driven optimizer for Retrieval-Augmented
-Generation (RAG) pipelines. Instead of grid search or Bayesian optimization,
-it runs a two-stage LLM agent loop: a diagnoser analyses *why* a trial
-configuration fails, and a proposer chooses *what to change* next based on
-that diagnosis and the history of prior trials. The optimization signal is a
-synthetic exam, typed open-ended questions plus ground-truth answers
-generated from your corpus on the first run and cached for reuse. Retrieval
-is database-agnostic: vector, hybrid BM25+vector, graph, or hybrid
-graph-vector.
+Agentic AutoRAG is a reasoning-driven optimizer for Retrieval-Augmented Generation (RAG) pipelines. Instead of grid search or Bayesian optimization, it runs a two-stage LLM agent loop: a diagnoser analyses why a trial configuration fails, and a proposer chooses what to change next from that diagnosis and the history of prior trials. The optimization signal is a synthetic exam, open-ended questions with ground-truth answers generated from your corpus on the first run and cached for reuse. Retrieval is database-agnostic: vector, hybrid BM25 plus vector, graph, or hybrid graph plus vector.
 
 ## How it works
 
-Each run proceeds in three phases:
+1. **Exam generation.** On the first run the examiner model reads your corpus and writes an exam of typed questions (extraction, definitional, inference, bridge, comparison, and two numeric types) paired with answers grounded in verbatim source spans. Every question is validated and run through a ladder of probe pipelines, and the exam keeps the questions that separate weak configurations from strong ones. The exam is cached to `exam.json`.
+2. **Reasoning loop.** Each trial builds the proposed pipeline and evaluates it against the exam. The diagnoser explains why the configuration scored as it did (retrieval misses versus generation errors, which question types failed). The proposer then picks the next configuration from the diagnosis, the full trial history, and a knowledge base of model benchmarks and prices.
+3. **Selection.** In cost-aware mode trials are scored on answer accuracy and LLM cost per query. The non-dominated trials form a Pareto frontier, and the optimizer model picks the recommended configuration from it, capable and cheap rather than top score at any price. Every frontier member is written out as a ready-to-run configuration.
 
-1. **Exam generation.** On the first run the examiner LLM reads your corpus
-   and writes a synthetic exam — typed open-ended questions (extraction,
-   definitional, inference, multi-hop bridge, comparison, numeric) paired with
-   ground-truth answers grounded in specific source spans. Each question is
-   validated (answer spans verified, an oracle gate confirms it's answerable)
-   and the most discriminating items are kept. The exam is cached to
-   `exam.json` and reused on later runs.
-2. **Reasoning loop.** For each trial the pipeline is built and evaluated
-   against the exam. A **diagnoser** analyses *why* the configuration scored as
-   it did (retrieval misses vs. generation errors, which question types
-   failed); a **proposer** then chooses *what to change* next, informed by the
-   diagnosis and the full history of prior trials — not a grid or Bayesian
-   sweep.
-3. **Selection.** Trials are scored on two axes, answer quality and LLM cost
-   per query; the non-dominated ones form a **Pareto frontier**, and the
-   `--objective` policy picks the single `recommended.yaml` from it.
+The details are in [docs/how_it_works.md](docs/how_it_works.md).
 
 ## Setup
 
@@ -44,32 +23,23 @@ uv sync                  # runtime dependencies
 uv sync --extra dev      # add tests, lint, and vLLM
 ```
 
-Copy `.env.example` to `.env` and fill in API keys for the providers you
-plan to use:
-
-```bash
-cp .env.example .env
-```
-
-Required keys are validated at startup based on the models you configure:
+Copy `.env.example` to `.env` and fill in the keys for the providers you use. Only the keys for models in your config are checked, and a missing one is reported by name at startup.
 
 | Provider prefix   | Env vars                                                          |
 | ----------------- | ----------------------------------------------------------------- |
 | `openai/...`      | `OPENAI_API_KEY`                                                  |
 | `anthropic/...`   | `ANTHROPIC_API_KEY`                                               |
+| `gemini/...`      | `GEMINI_API_KEY`                                                  |
+| `mistral/...`     | `MISTRAL_API_KEY`                                                 |
+| `cohere/...`      | `COHERE_API_KEY`                                                  |
 | `azure/...`       | `AZURE_API_KEY`, `AZURE_API_BASE`                                 |
 | `azure_ai/...`    | `AZURE_AI_API_KEY`, `AZURE_AI_API_BASE`                           |
-| `gemini/...`      | `GEMINI_API_KEY`                                                  |
 | `vertex_ai/...`   | `VERTEXAI_PROJECT`, `VERTEXAI_LOCATION`                           |
-| `bedrock/...`     | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION_NAME`   |
-| `mistral/...`     | `MISTRAL_API_KEY`                                                 |
-| `ollama/...`      | none — start `ollama serve` and `ollama pull` each model          |
-| `hosted_vllm/...` | none — vLLM is auto-managed (install via `uv sync --extra dev`)   |
+| `bedrock/...`     | `AWS_REGION_NAME` plus access keys, `AWS_PROFILE`, or an IAM role |
+| `ollama/...`      | none. Start `ollama serve` and `ollama pull` each model            |
+| `hosted_vllm/...` | none. vLLM is started for you (install via `uv sync --extra dev`)  |
 
-Azure note: `AZURE_API_BASE` is `https://<resource>.cognitiveservices.azure.com/`
-or `https://<resource>.openai.azure.com/`. `AZURE_AI_API_BASE` is
-`https://<resource>.services.ai.azure.com/models`. If Azure returns one
-shared key, use it for both `AZURE_API_KEY` and `AZURE_AI_API_KEY`.
+Azure note: `AZURE_API_BASE` is `https://<resource>.cognitiveservices.azure.com/` or `https://<resource>.openai.azure.com/`. `AZURE_AI_API_BASE` is `https://<resource>.services.ai.azure.com/models`. If Azure returns one shared key, use it for both `AZURE_API_KEY` and `AZURE_AI_API_KEY`.
 
 Sanity-check your environment:
 
@@ -79,106 +49,47 @@ uv run agentic-autorag info
 
 ## Corpus
 
-Point `meta.corpus_path` at a directory of documents. Supported formats:
-PDF, DOCX, XLSX, PPTX, HTML, CSV, Markdown, plain text, AsciiDoc, and
-images (PNG/JPG/TIFF/BMP/WEBP, OCR'd). Subdirectories are walked
-recursively; one file per source document.
+Point `meta.corpus_path` at a directory of documents. Supported formats: PDF, DOCX, XLSX, PPTX, HTML, CSV, Markdown, plain text, AsciiDoc, and images (PNG, JPG, TIFF, BMP, WEBP, through OCR). Subdirectories are walked recursively, one file per source document.
 
-The example configs use `./data/corpus/unidoc/`; download it with:
+The example configs use `./data/corpus/unidoc/`. Download it with:
 
 ```bash
 uv run python scripts/download_unidoc_corpus.py
 ```
 
-## Configure
+## Configure and run
 
-Start from `configs/starter_example.yaml`, copy to a new file, and edit. The
-fields you'll most often change:
-
-- `meta.corpus_path`, `meta.project_name`, `meta.output_dir`
-- `meta.max_trials` — optimization budget
-- `agent.optimizer_model`, `agent.examiner_model`, `agent.judge_model`
-- `search_space.embedding.models`
-- `search_space.generator.models`
-
-See `configs/full_example.yaml` for every supported field with its package
-default, and `agentic_autorag/config/models.py` for the Pydantic schema (the
-source of truth — invalid configs fail at parse time with a clear error).
-
-## Bring your own exam
-
-By default the exam is generated from your corpus. If you already have questions
-with known answers, optimize against those instead — point the examiner at a
-JSON file and generation is skipped:
-
-```yaml
-examiner:
-  custom_exam_path: path/to/exam.json
-```
-
-The file is a list of question records; attaching supporting-document ids (and,
-optionally, verbatim evidence spans) unlocks retrieval-level diagnostics. If your
-questions carry document ids but no spans, `ground-exam` adds and verifies the
-spans for you. See [docs/custom_exam.md](docs/custom_exam.md) for the format,
-the three grounding tiers, and examples.
-
-## Run
+Copy `configs/starter_example.yaml`, set the corpus path, the models that drive the optimizer, and the search space, then run:
 
 ```bash
-uv run agentic-autorag optimize --config configs/starter_example.yaml
+uv run agentic-autorag optimize --config configs/my_project.yaml
+```
+
+To inspect the exam before spending on trials:
+
+```bash
+uv run agentic-autorag generate-exam --config configs/my_project.yaml
 ```
 
 To start over on a clean output directory:
 
 ```bash
-uv run agentic-autorag clean --config configs/starter_example.yaml
+uv run agentic-autorag clean --config configs/my_project.yaml
 ```
 
 ## Outputs
 
-Everything is written under `meta.output_dir`:
+Everything is written under `meta.output_dir`. The files you will read are `optimization_summary.md` (the report, with the frontier table and the reasons for the recommendation), `recommended.yaml` (the recommended pipeline configuration), `frontier/` (one YAML per frontier member), and `exam.json`. Trial history, cost ledgers, and exam audits live under `details/`. See [docs/outputs.md](docs/outputs.md).
 
-- `optimization_summary.md` — the run report: the recommended config and why,
-  what the search found, and (cost-aware) the Pareto frontier table, score-vs-cost
-  chart, tradeoffs, and per-config YAML. The prose is written by the optimizer
-  model (disable with `--skip-final-report`); the tables are deterministic.
-- `recommended.yaml` — the recommended pipeline configuration.
-- `frontier/` — alternative configurations on the Pareto frontier, one
-  YAML per frontier point.
-- `frontier.json` — machine-readable frontier index.
-- `history.jsonl` — one record per trial (config, scores, diagnosis, proposal).
-- `cost_breakdown.json` — LLM spend per category (e.g. `rag_eval`,
-  `exam_generation`, `judge`, `agent_proposal`, `final_report`).
-- `exam.json` — the synthetic exam used for evaluation (generated on the
-  first run, reused on subsequent runs).
-- `run.log` — full run log, including every agent prompt.
+## Documentation
 
-## After optimization
-
-`recommended.yaml` is a complete, ready-to-use pipeline config. To score it
-(or any `frontier/trial_NN.yaml`) against held-out QA:
-
-```bash
-uv run agentic-autorag benchmark-evaluate \
-  --project-config configs/starter_example.yaml \
-  --trial-config experiments/unidoc-starter/recommended.yaml \
-  --qa path/to/qa.json \
-  --output results.json \
-  --judge-model gemini/gemini-3-flash-preview
-```
-
-## Troubleshooting
-
-- **Missing API key at startup.** Only the keys for models in your config are
-  validated; the error names the missing variable — add it to `.env`.
-- **An endpoint started working after a failed run.** Endpoint checks are
-  cached — re-run with `--force-verify` to re-ping every model.
-- **`.cache/` is large.** It holds the parsed corpus, embeddings, and exam so
-  reruns are fast. `agentic-autorag clean` removes it along with the run
-  artifacts.
-- **Re-running** reuses the cached corpus and `exam.json` but starts the trial
-  history fresh; use `clean` for a fully cold run.
+- [docs/how_it_works.md](docs/how_it_works.md): the three phases, the reasoning loop, scoring, and how the recommendation is chosen.
+- [docs/exam_generation.md](docs/exam_generation.md): how the exam is built, the question types, the neighborhood weighting and when to change it, every `examiner` setting.
+- [docs/configuration.md](docs/configuration.md): every config section and field, providers and credentials, the knowledge base.
+- [docs/search_space.md](docs/search_space.md): every dimension the optimizer can tune, its options, and its constraints.
+- [docs/outputs.md](docs/outputs.md): the output tree, the report, history and cost files, re-running, and cleaning.
+- [docs/custom_exam.md](docs/custom_exam.md): optimizing against your own questions.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).

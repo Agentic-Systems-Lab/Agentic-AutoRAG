@@ -31,25 +31,19 @@ meta:
     UniDoc-Bench corpus: real-world enterprise healthcare PDFs and page
     images. Single-domain; complex layouts (tables, figures, mixed text).
   output_dir: "./experiments/unidoc/"
-  # Trial budget. The optimizer may stop early if the early-exit gate
-  # below is satisfied; otherwise it runs to ``max_trials``.
+  # Trial budget. The loop always runs to ``max_trials``.
   max_trials: 30
   # Upper bound for the ingredient cache (chunks + embeddings per
   # chunker × embedder × corpus tuple). LRU evicts oldest when exceeded.
   cache_max_gb: 5.0
   # Optimization objective.
-  #   true  — two-objective (score↑, cost↓). The agent sees the Pareto
-  #           frontier, the knee/score-leader anchors, and the cheapest-
-  #           in-band signal; the ``polish`` stance is available; the
-  #           end-of-run frontier report and recommended.yaml honour the
-  #           CLI --objective selection policy.
-  #   false — single-objective (score↑ only). Cost is still recorded for
-  #           post-hoc Pareto analysis but is hidden from the agent's
-  #           prompts; the ``polish`` stance is illegal; ``--objective``
-  #           is coerced to ``max_score`` since other policies have no
-  #           meaning without a cost objective. Use this for apples-to-
-  #           apples score-only comparisons against random / Bayesian /
-  #           Marker-Inc AutoRAG baselines.
+  #   true:  two-objective (score up, cost down). The agent sees the Pareto
+  #          frontier, the report shows it, and the report model picks
+  #          recommended.yaml from the frontier.
+  #   false: single-objective (score only). Cost is still recorded for
+  #          post-hoc analysis but hidden from the agent's prompts, and
+  #          recommended.yaml is the top-accuracy trial. Use this for
+  #          score-only comparisons against other optimizers.
   cost_aware: true
   # Seed for the stratified failure sampler used to build deep-block
   # evidence for the Diagnoser. ``null`` derives the seed from the trial
@@ -103,8 +97,8 @@ agent:
   optimizer_model: "gemini/gemini-3-flash-preview"
   examiner_model: "gemini/gemini-3-flash-preview"
   # Reference model for the oracle answerability gate and the trial-time
-  # judge (grades free-form predictions when EM=0). When null, the
-  # strongest LLM in the search space is auto-picked.
+  # judge (grades free-form predictions when EM=0). Required. Pick one at
+  # least as strong as the generators in the search space.
   judge_model: "gemini/gemini-3-flash-preview"
   # Reasoning effort for optimizer LLM calls. Passed through to
   # litellm.acompletion when the model supports it; silently dropped
@@ -124,12 +118,16 @@ agent:
 # the first run and cached as ``<meta.output_dir>/exam.json`` for reuse.
 examiner:
   exam_size: 80
+  # Path to your own exam JSON. When set, generation is skipped and the run
+  # optimizes against these questions. See docs/custom_exam.md.
+  custom_exam_path: null
   # Over-generate to absorb composition / probe / oracle rejections.
   initial_question_multiplier: 1.5
-  # 4-probe discrimination filter. Disable only for tests / debugging.
+  # Discrimination filter over up to four probe pipelines. Disable only for
+  # tests / debugging.
   probe_selection: true
   # Persist exam-generation analysis artifacts (composition log, span
-  # verification, multi-hop rejections) to ``<meta.output_dir>/debug/``.
+  # verification, multi-hop rejections) to ``<meta.output_dir>/details/debug/``.
   # On by default — they're how exam generation is inspected and tuned.
   save_debug_artifacts: true
   # Sampling temperature for the composition LLM. Default 1.0 because
@@ -137,15 +135,14 @@ examiner:
   composition_temperature: 1.0
 
   # --- Neighborhood builder ---
-  # The composer sees a NEIGHBORHOOD per call: anchor + same-document
-  # siblings + cosine-similar cross-document chunks. The neighborhood grows
-  # until it has at least neighborhood_min_chunks chunks OR
-  # neighborhood_min_words words, whichever first — adapts automatically
-  # to corpus chunk granularity. ``neighborhood_same_doc_weight`` and
-  # ``neighborhood_cross_doc_weight`` set the target mix of additions:
-  # normalized internally, so absolute values needn't sum to 1. Lower the
-  # same-doc weight for cross-doc-rich corpora (Wikipedia) and raise it
-  # for cross-doc-sparse corpora (independent academic papers).
+  # The composer sees a NEIGHBORHOOD per call: the anchor chunk, chunks from
+  # the same document, and lexically similar chunks from other documents.
+  # The neighborhood grows until it has neighborhood_min_chunks chunks OR
+  # neighborhood_min_words words, whichever comes first. The two weights
+  # split the extra slots between the anchor's document and other documents
+  # (normalized, so 0.8/0.2 equals 4/1). They control only what the composer
+  # sees, not how many cross-document questions survive. See
+  # docs/exam_generation.md before changing them.
   neighborhood_min_chunks: 12
   neighborhood_min_words: 5000
   neighborhood_same_doc_weight: 0.8

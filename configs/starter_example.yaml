@@ -7,7 +7,8 @@
 #
 # Only the most-edited fields are included. Everything else falls back to
 # the package defaults. See configs/full_example.yaml for every supported
-# field, and agentic_autorag/config/models.py for the schema.
+# field, and agentic_autorag/config/models.py for the schema. The docs/
+# directory explains every section, starting with docs/configuration.md.
 
 
 # Project-level settings: corpus location and run budget.

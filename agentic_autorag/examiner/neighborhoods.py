@@ -122,8 +122,8 @@ def build_neighborhood(
       2. Normalize ``(same_doc_weight, cross_doc_weight)`` and split the
          non-anchor slots ``N - 1`` into ``target_same`` /
          ``target_cross``.
-      3. Take up to ``target_same`` same-doc siblings in
-         document-natural order (the chunker's emission order, which
+      3. Take up to ``target_same`` same-doc chunks from the start of
+         the anchor's document in emission order (which
          ``enumerate(chunks)`` already preserves). If the pool is
          smaller, redirect the deficit to the cross-doc target.
       4. Build the palette centroid = L2-normalize(sum of TF-IDF rows of
@@ -167,6 +167,13 @@ def build_neighborhood(
     target_same = round(extras * same_ratio)
     target_cross = extras - target_same
 
+    # TODO: the prefix slice takes the document head for every anchor rather
+    # than the chunks around the anchor. Every anchor from one document
+    # therefore sees the same head chunks, and two adjacent section-level
+    # chunks never co-occur in a neighborhood unless one of them is the
+    # anchor. A change should fill the same-doc slots anchor-centred
+    # (expanding outward by index), optionally always keeping chunk 0 for the
+    # identifying context the head provides.
     same_picked = same_doc_pool[:target_same]
     deficit = target_same - len(same_picked)
     cross_budget = target_cross + deficit
