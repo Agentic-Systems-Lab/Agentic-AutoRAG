@@ -80,7 +80,7 @@ requires-dist = [
     { name = "lightrag-hku", specifier = ">=1.4.10" },
     { name = "litellm" },
     { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.10.8" },
-    { name = "mteb", specifier = ">=2.10.9" },
+    { name = "mteb", specifier = ">=2.20.11" },
     { name = "numpy" },
     { name = "opencv-python-headless", specifier = ">=4.13.0.92" },
     { name = "pydantic", specifier = ">=2.0" },
@@ -3292,7 +3292,7 @@ wheels = [
 
 [[package]]
 name = "mteb"
-version = "2.10.9"
+version = "2.20.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "datasets" },
@@ -3307,11 +3307,12 @@ dependencies = [
     { name = "sentence-transformers" },
     { name = "torch" },
     { name = "tqdm" },
+    { name = "transformers" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/40/ac59fe70704922ca43e9276602adad0da9722e6ab97e23e45fa3eba5a264/mteb-2.10.9.tar.gz", hash = "sha256:62d5dde90188812e5912d9cbdbfd29863070bc0c1f30231d70a4f400a8f270a9", size = 3352189, upload-time = "2026-03-10T11:01:26.696Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/55/5a/10f1cba1977291882acfa171ba5fc7d6a5356d26486a5824cfcbd92edfb4/mteb-2.20.11.tar.gz", hash = "sha256:21fffc336c39432677b72721df964de52d4521d72088745885dcbc2c44e4cf06", size = 4213496, upload-time = "2026-09-07T17:29:35.501Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/38/52/6a07c427819814ffd038520205bd1d6ed64ce9df69592945c367f97a4dd8/mteb-2.10.9-py3-none-any.whl", hash = "sha256:a1e98918d3298c0754267efca5fd55f35ca720faf558c2ce92070f452656484e", size = 5156680, upload-time = "2026-03-10T11:01:24.096Z" },
+    { url = "https://files.pythonhosted.org/packages/30/98/79d778f99fe583017b5ff883a2e830a9ade04ee955c1af147348f6ac16a9/mteb-2.20.11-py3-none-any.whl", hash = "sha256:5e4ad1a44e4512701200c5c66c5fb6658ad7ccffb6b33f31cbc497d3f631d370", size = 6532822, upload-time = "2026-09-07T17:29:32.63Z" },
 ]
 
 [[package]]

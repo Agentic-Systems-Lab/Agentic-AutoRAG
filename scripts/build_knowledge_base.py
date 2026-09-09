@@ -35,7 +35,9 @@ import logging
 import math
 import os
 import re
+from collections import Counter, defaultdict
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import requests
 import yaml
@@ -44,6 +46,10 @@ from dotenv import load_dotenv
 from agentic_autorag.config.aa_matcher import VARIANT_SUFFIXES, build_aa_to_litellm_mapping
 from agentic_autorag.config.knowledge_base import _route_priority
 
+if TYPE_CHECKING:
+    from mteb.benchmarks.benchmark import Benchmark
+    from mteb.results.benchmark_results import BenchmarkResults
+
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -51,6 +57,11 @@ logger = logging.getLogger(__name__)
 
 LLM_BENCHMARKS = ["mmlu_pro", "gpqa", "ifbench", "artificial_analysis_intelligence_index"]
 EMBEDDING_TASKS = ["Retrieval", "STS", "Reranking"]
+EMBEDDING_BENCHMARK = "MTEB(eng, v2)"
+# The leaderboard blanks a task type as soon as one of its tasks is missing for
+# a model. The knowledge base averages the tasks the model did run instead, as
+# long as it covers at least this share of the type's tasks.
+MIN_TASK_COVERAGE = 0.5
 AA_API_URL = "https://artificialanalysis.ai/api/v2/data/llms/models"
 AA_CACHE_FILENAME = "_aa_response_cache.json"
 
@@ -317,17 +328,64 @@ def build_llm_knowledge_base(
     logger.info("Wrote %s (%d models)", out_path, len(models_out))
 
 
+def _to_float(val: object) -> float | None:
+    try:
+        f = float(val) if val is not None else None  # type: ignore[arg-type]
+        return None if f is not None and math.isnan(f) else f
+    except (ValueError, TypeError):
+        return None
+
+
+def _partial_type_means(results: BenchmarkResults, benchmark: Benchmark) -> dict[str, dict[str, tuple[float, float]]]:
+    """Per-task-type mean over the tasks each model has run, with the covered share.
+
+    Reads the leaderboard's own long frame (one row per task, split, and
+    subset), so the means equal ``get_benchmark_result`` wherever a model
+    covers every task of a type. Types below ``MIN_TASK_COVERAGE`` are omitted.
+    """
+    import polars as pl  # noqa: PLC0415
+
+    task_type = {task.metadata.name: task.metadata.type for task in benchmark.tasks}
+    tasks_per_type = Counter(task_type.values())
+    per_task = results._to_results_df(benchmark.tasks).group_by(["model_name", "task_name"]).agg(pl.col("score").mean())
+
+    scores_by_model: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+    for model, task, score in per_task.iter_rows():
+        if score is not None and task in task_type:
+            scores_by_model[model][task_type[task]].append(score)
+
+    means: dict[str, dict[str, tuple[float, float]]] = {}
+    for model, by_type in scores_by_model.items():
+        means[model] = {}
+        for task_kind, values in by_type.items():
+            coverage = len(values) / tasks_per_type[task_kind]
+            if coverage >= MIN_TASK_COVERAGE:
+                means[model][task_kind] = (sum(values) / len(values), coverage)
+    return means
+
+
+def _model_memory_mb(hf_id: str) -> float | None:
+    """Memory footprint from mteb's model registry, None for models it does not know."""
+    import mteb  # noqa: PLC0415
+
+    try:
+        return mteb.get_model_meta(hf_id).memory_usage_mb
+    except (KeyError, ValueError):
+        return None
+
+
 def build_embedding_knowledge_base(output_dir: Path) -> None:
     """Fetch MTEB results and write knowledge_base/embeddings.yaml."""
     import mteb  # noqa: PLC0415
 
     logger.info("Loading MTEB benchmark results…")
-    benchmark = mteb.get_benchmark("MTEB(eng, v2)")
+    benchmark = mteb.get_benchmark(EMBEDDING_BENCHMARK)
     cache = mteb.ResultCache()
     logger.info("  Downloading results from remote (this may take a few minutes)…")
     cache.download_from_remote()
     results = cache.load_results(tasks=benchmark)
     df = results.get_benchmark_result()
+    type_means = _partial_type_means(results, benchmark)
 
     logger.info("  Loaded results for %d models", len(df))
 
@@ -340,40 +398,34 @@ def build_embedding_knowledge_base(output_dir: Path) -> None:
         if not hf_id:
             continue
 
-        def _to_float(val: object) -> float | None:
-            try:
-                f = float(val) if val is not None else None  # type: ignore[arg-type]
-                return None if f is not None and math.isnan(f) else f
-            except (ValueError, TypeError):
-                return None
-
-        params_b = _to_float(row.get("Number of Parameters (B)"))
-        memory_mb = _to_float(row.get("Memory Usage (MB)"))
         dim_raw = _to_float(row.get("Embedding Dimensions"))
-        dimensions = int(dim_raw) if dim_raw is not None and not math.isnan(dim_raw) else None
         tok_raw = _to_float(row.get("Max Tokens"))
-        max_tokens = int(tok_raw) if tok_raw is not None and not math.isnan(tok_raw) else None
 
         scores: dict[str, float | None] = {}
-        for task in EMBEDDING_TASKS:
-            val = _to_float(row.get(task))
-            scores[task.lower()] = round(val, 4) if val is not None else None
+        coverage: dict[str, float] = {}
+        for task_kind in EMBEDDING_TASKS:
+            mean_and_coverage = type_means.get(hf_id, {}).get(task_kind)
+            scores[task_kind.lower()] = round(mean_and_coverage[0], 4) if mean_and_coverage else None
+            if mean_and_coverage:
+                coverage[task_kind.lower()] = round(mean_and_coverage[1], 2)
 
         models_out[hf_id] = {
             "hf_id": hf_id,
-            "parameters_billions": params_b,
-            "memory_usage_mb": memory_mb,
-            "embedding_dimensions": dimensions,
-            "max_tokens": max_tokens,
+            "parameters_billions": _to_float(row.get("Total Parameters (B)")),
+            "memory_usage_mb": _model_memory_mb(hf_id),
+            "embedding_dimensions": int(dim_raw) if dim_raw is not None else None,
+            "max_tokens": int(tok_raw) if tok_raw is not None else None,
             "scores": scores,
+            "score_coverage": coverage,
         }
 
     output = {
         "_metadata": {
             "built_at": datetime.datetime.now(datetime.UTC).isoformat(),
-            "benchmark": "MTEB(eng, v2)",
+            "benchmark": EMBEDDING_BENCHMARK,
             "model_count": len(models_out),
             "tasks_included": EMBEDDING_TASKS,
+            "min_task_coverage": MIN_TASK_COVERAGE,
         },
         "models": models_out,
     }
@@ -410,6 +462,7 @@ def main() -> None:
 
     build_llm = not args.embedding_only
     build_embed = not args.llm_only
+    failed: list[str] = []
 
     if build_llm:
         api_key = args.aa_api_key or os.environ.get("ARTIFICIAL_ANALYSIS_API_KEY")
@@ -420,18 +473,19 @@ def main() -> None:
                 refresh_aa_cache=args.refresh_aa_cache,
                 use_cache_only=args.use_cache_only,
             )
-        except Exception as e:
-            logger.error("Failed to build LLM knowledge base: %s", e)
-            if args.llm_only:
-                raise
+        except Exception:
+            logger.exception("Failed to build LLM knowledge base")
+            failed.append("llms.yaml")
 
     if build_embed:
         try:
             build_embedding_knowledge_base(output_dir)
-        except Exception as e:
-            logger.error("Failed to build embedding knowledge base: %s", e)
-            if args.embedding_only:
-                raise
+        except Exception:
+            logger.exception("Failed to build embedding knowledge base")
+            failed.append("embeddings.yaml")
+
+    if failed:
+        raise SystemExit(f"Failed to build: {', '.join(failed)}")
 
     logger.info(
         "Done. Static files (rerankers.yaml, parameter_descriptions.yaml) are hand-authored — no rebuild needed."
