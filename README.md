@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lassebaerlandstrand/Agentic-AutoRAG/HEAD/assets/Agentic_AutoRAG.png" alt="Agentic AutoRAG">
+  <img src="https://raw.githubusercontent.com/Agentic-Systems-Lab/Agentic-AutoRAG/HEAD/assets/Agentic_AutoRAG.png" alt="Agentic AutoRAG">
 </p>
 
 # Agentic AutoRAG

@@ -54,9 +54,9 @@ dependencies = [
 agentic-autorag = "agentic_autorag.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/lassebaerlandstrand/Agentic-AutoRAG"
-Repository = "https://github.com/lassebaerlandstrand/Agentic-AutoRAG"
-Issues = "https://github.com/lassebaerlandstrand/Agentic-AutoRAG/issues"
+Homepage = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG"
+Repository = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG"
+Issues = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG/issues"
 
 [project.optional-dependencies]
 dev = [
