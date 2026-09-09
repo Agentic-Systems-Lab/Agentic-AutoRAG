@@ -67,9 +67,9 @@ model_aliases:
 
 A value is either a model string or a mapping with `model` and optional `api_base`, `api_key`, `api_version`.
 
-## `graph`
+## `graph` (experimental)
 
-Needed when `search_space.retrieval.index_types` includes `graph_only` or `hybrid_graph_vector`. The knowledge graph is built once by LightRAG before the first trial and cached under `lightrag/` in the output directory. It is fixed for the run, not searched.
+Graph retrieval is experimental. No example config uses it and it receives far less testing than vector and hybrid retrieval, so expect rough edges. The section is needed when `search_space.retrieval.index_types` includes `graph_only` or `hybrid_graph_vector`. The knowledge graph is built once by LightRAG before the first trial and cached under `lightrag/` in the output directory. It is fixed for the run, not searched.
 
 | Field | Default | Meaning |
 | --- | --- | --- |

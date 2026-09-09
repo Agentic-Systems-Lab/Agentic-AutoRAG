@@ -194,8 +194,8 @@ search_space:
     index_types:
       - "vector_only"
       - "hybrid_bm25_vector"
-      # - "graph_only"            # requires a graph: section below
-      # - "hybrid_graph_vector"   # requires a graph: section below
+      # - "graph_only"            # experimental, requires a graph: section below
+      # - "hybrid_graph_vector"   # experimental, requires a graph: section below
     top_k: { min: 3, max: 20 }
     hybrid_alpha: { min: 0.0, max: 1.0 }
     # Fusion strategy for hybrid_bm25_vector. ``alpha`` uses hybrid_alpha;
@@ -241,15 +241,15 @@ search_space:
   # the engine applies the same temperature regardless of stage.
   temperature: { min: 1.0, max: 1.0 }
 
-  # Graph retrieval — only active when ``retrieval.index_types`` includes
-  # a graph type. Uncomment alongside the matching graph: section below.
+  # Graph retrieval (experimental). Only active when ``retrieval.index_types``
+  # includes a graph type. Uncomment alongside the matching graph: section below.
   # graph_retrieval:
   #   graph_query_modes: ["local", "global", "hybrid"]
   #   graph_top_k: { min: 20, max: 100 }
 
 
 # ── graph ──────────────────────────────────────────────────────────────────
-# Fixed knowledge-graph build configuration. Required when
+# Experimental. Fixed knowledge-graph build configuration. Required when
 # ``search_space.retrieval.index_types`` includes ``graph_only`` or
 # ``hybrid_graph_vector``; omit otherwise. The graph is built once before
 # optimization; mismatches between persisted build config and current

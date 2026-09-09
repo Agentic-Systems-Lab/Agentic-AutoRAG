@@ -35,13 +35,13 @@ Models run locally in half precision. Each one you add costs one embedding pass 
 
 | Key | Values | Default |
 | --- | --- | --- |
-| `retrieval.index_types` | `vector_only`, `hybrid_bm25_vector`, `graph_only`, `hybrid_graph_vector` | `[vector_only]` |
+| `retrieval.index_types` | `vector_only`, `hybrid_bm25_vector`, and the experimental `graph_only` and `hybrid_graph_vector` | `[vector_only]` |
 | `retrieval.top_k` | chunks fetched from the index | `3` to `20` |
 | `retrieval.hybrid_alpha` | weight of the vector side in hybrid retrieval, `0.0` is pure BM25 and `1.0` is pure vector | `0.0` to `1.0` |
 | `retrieval.bm25_vector_fusion` | `alpha`, `rrf` | `[alpha]` |
 | `retrieval.long_context_reorder` | `true`, `false` | `[false]` |
 
-`vector_only` is nearest-neighbour search over the embeddings. `hybrid_bm25_vector` adds a BM25 full-text index and fuses the two result lists, either as a weighted blend of normalized scores controlled by `hybrid_alpha`, or by reciprocal rank fusion (`rrf`), which has no parameter. `hybrid_alpha` is used only with `alpha` fusion. The graph types query a LightRAG knowledge graph and need a `graph:` block, see [configuration.md](configuration.md). `hybrid_graph_vector` merges graph results with vector results by reciprocal rank fusion.
+`vector_only` is nearest-neighbour search over the embeddings. `hybrid_bm25_vector` adds a BM25 full-text index and fuses the two result lists, either as a weighted blend of normalized scores controlled by `hybrid_alpha`, or by reciprocal rank fusion (`rrf`), which has no parameter. `hybrid_alpha` is used only with `alpha` fusion. The two graph types are experimental. They query a LightRAG knowledge graph and need a `graph:` block, see [configuration.md](configuration.md). `hybrid_graph_vector` merges graph results with vector results by reciprocal rank fusion.
 
 `long_context_reorder` repeats the top-scored passage at the end of the context so it sits next to the question. It does nothing when a compressor has collapsed the context to one passage.
 
@@ -90,7 +90,7 @@ The generator writes the final answer from the context and is the model your use
 
 One value per trial, applied to every LLM call in the pipeline. The default pins it to 1.0 because several current models reject any other value. Widen the range only if every model in your pools accepts it.
 
-## Graph retrieval
+## Graph retrieval (experimental)
 
 | Key | Values | Default |
 | --- | --- | --- |
