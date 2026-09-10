@@ -90,6 +90,10 @@ Everything is written under `meta.output_dir`. The files you will read are `opti
 - [docs/outputs.md](docs/outputs.md): the output tree, the report, history and cost files, re-running, and cleaning.
 - [docs/custom_exam.md](docs/custom_exam.md): optimizing against your own questions.
 
+## Reproducing the paper
+
+Benchmark repository: [lassebaerlandstrand/Agentic-AutoRAG-Bench](https://github.com/lassebaerlandstrand/Agentic-AutoRAG-Bench)
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
