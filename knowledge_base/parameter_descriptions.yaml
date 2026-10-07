@@ -81,7 +81,7 @@ parameters:
 
   reasoning:
     description: "Enable extended reasoning/thinking mode for the generator stage via LiteLLM's reasoning_effort parameter."
-    guidance: "Only the generator's final-answer call uses reasoning_effort; compressor/expander calls are always non-reasoning. The Knowledge Base table's '(reasoning)' rows show benchmarks measured with reasoning on — these can differ from non-reasoning rows in unexpected ways (different evaluation conditions, not degradation)."
+    guidance: "Only the generator's final-answer call uses reasoning_effort; compressor/expander calls are always non-reasoning. The Knowledge Base table's '(reasoning)' rows show the Intelligence Index measured with reasoning on — it can differ from non-reasoning rows in unexpected ways (different evaluation conditions, not degradation)."
 
   graph_query_mode:
     description: "How the knowledge graph is traversed. Only relevant when index_type is graph_only or hybrid_graph_vector."

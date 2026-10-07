@@ -55,7 +55,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-LLM_BENCHMARKS = ["mmlu_pro", "gpqa", "ifbench", "artificial_analysis_intelligence_index"]
+LLM_BENCHMARKS = ["artificial_analysis_intelligence_index"]
 EMBEDDING_TASKS = ["Retrieval", "STS", "Reranking"]
 EMBEDDING_BENCHMARK = "MTEB(eng, v2)"
 # The leaderboard blanks a task type as soon as one of its tasks is missing for
@@ -65,7 +65,8 @@ MIN_TASK_COVERAGE = 0.5
 # Parameter counts are stored in billions at the leaderboard's precision.
 PARAMS_PER_BILLION = 1e9
 PARAMETER_DECIMALS = 3
-AA_API_URL = "https://artificialanalysis.ai/api/v2/data/llms/models"
+# The Free route accepts every key tier and carries all fields the knowledge base uses.
+AA_API_URL = "https://artificialanalysis.ai/api/v2/language/models/free"
 AA_CACHE_FILENAME = "_aa_response_cache.json"
 
 
@@ -129,18 +130,28 @@ def _build_name_mapping(aa_slugs: list[str], litellm_keys: list[str]) -> dict[st
     return build_aa_to_litellm_mapping(aa_slugs, litellm_keys)
 
 
-def _fetch_aa_models_remote(api_key: str) -> list[dict]:
+def _fetch_aa_models_remote(api_key: str) -> tuple[list[dict], dict]:
+    """Fetch every page of AA language models; return ``(models, meta)``."""
     logger.info("Fetching models from Artificial Analysis API…")
-    resp = requests.get(AA_API_URL, headers={"x-api-key": api_key, "Content-Type": "application/json"}, timeout=30)
-    resp.raise_for_status()
-    models = resp.json().get("data", [])
+    models: list[dict] = []
+    page = 1
+    while True:
+        resp = requests.get(AA_API_URL, headers={"x-api-key": api_key}, params={"page": page}, timeout=30)
+        resp.raise_for_status()
+        body = resp.json()
+        models.extend(body.get("data", []))
+        if not body.get("pagination", {}).get("has_more"):
+            break
+        page += 1
+    meta = {"source_url": AA_API_URL, "intelligence_index_version": body.get("intelligence_index_version")}
     logger.info("  Retrieved %d models from AA", len(models))
-    return models
+    return models, meta
 
 
-def _write_aa_cache(cache_path: Path, models: list[dict]) -> None:
+def _write_aa_cache(cache_path: Path, models: list[dict], meta: dict) -> None:
     payload = {
         "fetched_at": datetime.datetime.now(datetime.UTC).isoformat(),
+        **meta,
         "data": models,
     }
     cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -184,8 +195,8 @@ def _load_aa_models(api_key: str | None, cache_path: Path, *, refresh: bool, cac
     if not api_key:
         raise RuntimeError("ARTIFICIAL_ANALYSIS_API_KEY required to fetch AA data (cache miss or --refresh-aa-cache)")
 
-    models = _fetch_aa_models_remote(api_key)
-    _write_aa_cache(cache_path, models)
+    models, meta = _fetch_aa_models_remote(api_key)
+    _write_aa_cache(cache_path, models, meta)
     logger.info("  Wrote AA cache to %s", cache_path)
     return models
 
@@ -205,7 +216,7 @@ def _load_litellm_ids() -> list[str]:
             full_id = model_name if model_name.startswith(f"{provider}/") else f"{provider}/{model_name}"
             all_ids.add(full_id)
     logger.info("  Loaded %d LiteLLM IDs", len(all_ids))
-    return list(all_ids)
+    return sorted(all_ids)
 
 
 def _litellm_context_length(litellm_ids: list[str]) -> tuple[int | None, int | None]:
@@ -280,9 +291,10 @@ def build_llm_knowledge_base(
             val = evals.get(b)
             benchmarks[b] = round(val, 4) if val is not None else None
 
+        raw_perf = aa.get("performance") or {}
         perf: dict[str, float | None] = {
-            "median_output_tokens_per_second": aa.get("median_output_tokens_per_second"),
-            "median_time_to_first_token_seconds": aa.get("median_time_to_first_token_seconds"),
+            "median_output_tokens_per_second": raw_perf.get("median_output_tokens_per_second"),
+            "median_time_to_first_token_seconds": raw_perf.get("median_time_to_first_token_seconds"),
         }
 
         creator = aa.get("model_creator") or {}

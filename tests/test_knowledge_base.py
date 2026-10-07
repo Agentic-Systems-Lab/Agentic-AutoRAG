@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
+import pytest
+import requests
 import yaml
 
 from agentic_autorag.config.aa_matcher import normalize as _normalize
@@ -21,9 +24,6 @@ _LLM_YAML = {
             "release_date": "2025-06-17",
             "litellm_ids": ["gemini/gemini-2.5-flash", "vertex_ai/gemini-2.5-flash"],
             "benchmarks": {
-                "mmlu_pro": 0.75,
-                "gpqa": 0.65,
-                "ifbench": 0.60,
                 "artificial_analysis_intelligence_index": 25.0,
             },
             "performance": {
@@ -47,9 +47,6 @@ _LLM_YAML = {
                 "bedrock/us.anthropic.claude-haiku-4-5-20251001-v1:0",
             ],
             "benchmarks": {
-                "mmlu_pro": 0.64,
-                "gpqa": 0.42,
-                "ifbench": 0.55,
                 "artificial_analysis_intelligence_index": 18.0,
             },
             "performance": {
@@ -208,7 +205,7 @@ class TestFindLlmEntry:
                     "name": "Model X (Non-reasoning)",
                     "slug": "model-x",
                     "litellm_ids": ["provider/model-x"],
-                    "benchmarks": {"mmlu_pro": 0.70},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 70.0},
                 },
                 "model-x-reasoning": {
                     "name": "Model X (Reasoning)",
@@ -216,7 +213,7 @@ class TestFindLlmEntry:
                     "litellm_ids": [],  # variants have empty IDs (unmatched in AA)
                     "base_slug": "model-x",
                     "variant_type": "reasoning",
-                    "benchmarks": {"mmlu_pro": 0.80},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 80.0},
                 },
             },
         }
@@ -333,12 +330,12 @@ class TestFormatForPrompt:
         assert "`vertex_ai/gemini-2.5-flash`" in result
         assert "`bedrock/unknown.model-v1:0`" in result
         # Known model shows a real benchmark number
-        assert "0.750" in result
+        assert "25.0" in result
         # Unknown row shows em-dashes for its data cells
         unknown_lines = [ln for ln in result.splitlines() if "bedrock/unknown.model-v1:0" in ln]
         assert unknown_lines, "unknown model row missing"
         # creator + release date + 4 benchmarks + 2 prices + tokens/s + max input
-        assert unknown_lines[0].count("—") >= 9
+        assert unknown_lines[0].count("—") >= 7
 
     def test_knowledge_base_header(self, tmp_path: Path) -> None:
         _write_kb(tmp_path)
@@ -453,7 +450,7 @@ class TestFormatForPrompt:
                     "slug": "model-y",
                     "creator": "Acme",
                     "litellm_ids": ["provider/model-y"],
-                    "benchmarks": {"mmlu_pro": 0.50},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 50.0},
                     "pricing": {"input_per_1m_tokens": 1.0, "output_per_1m_tokens": 4.0},
                 },
                 # Sibling marks base as the OFF default; the ON sibling itself
@@ -484,9 +481,9 @@ class TestFormatForPrompt:
         assert len(non_reasoning) == 1, result
         assert len(reasoning) == 1, result
         # OFF row has real data; ON row has blank cells but still shows ✓
-        assert "0.500" in non_reasoning[0]
+        assert "50.0" in non_reasoning[0]
         assert non_reasoning[0].rstrip().endswith("✓ |")
-        assert reasoning[0].count("—") >= 7
+        assert reasoning[0].count("—") >= 5
         assert reasoning[0].rstrip().endswith("✓ |")
 
 
@@ -502,7 +499,7 @@ class TestLoneAaEntryFallback:
       sibling exists.
     """
 
-    _FOOTNOTE = "\\* Same benchmarks shown for both modes — AA published only one measurement for this model."
+    _FOOTNOTE = "\\* Same Intelligence Index shown for both modes — AA published only one measurement for this model."
 
     def _write_lone_base(self, tmp_path: Path) -> None:
         llm_data = {
@@ -514,9 +511,6 @@ class TestLoneAaEntryFallback:
                     "creator": "Acme",
                     "litellm_ids": ["provider/lone-model"],
                     "benchmarks": {
-                        "mmlu_pro": 0.80,
-                        "gpqa": 0.70,
-                        "ifbench": 0.65,
                         "artificial_analysis_intelligence_index": 33.1,
                     },
                     "pricing": {"input_per_1m_tokens": 1.0, "output_per_1m_tokens": 4.0},
@@ -536,7 +530,6 @@ class TestLoneAaEntryFallback:
                     "creator": "Acme",
                     "litellm_ids": ["provider/effort-model"],
                     "benchmarks": {
-                        "mmlu_pro": 0.85,
                         "artificial_analysis_intelligence_index": 41.2,
                     },
                 },
@@ -548,7 +541,6 @@ class TestLoneAaEntryFallback:
                     "base_slug": "effort-model",
                     "variant_type": "medium",
                     "benchmarks": {
-                        "mmlu_pro": 0.82,
                         "artificial_analysis_intelligence_index": 38.9,
                     },
                 },
@@ -574,8 +566,8 @@ class TestLoneAaEntryFallback:
         assert len(non_reasoning) == 1, result
         assert len(reasoning) == 1, result
         # Both rows show the same Intelligence Index, not em-dashes.
-        assert "33.100" in non_reasoning[0]
-        assert "33.100" in reasoning[0]
+        assert "33.1" in non_reasoning[0]
+        assert "33.1" in reasoning[0]
         # Asterisks attached after the closing backtick.
         assert "(non-reasoning)`*" in non_reasoning[0]
         assert "(reasoning)`*" in reasoning[0]
@@ -606,9 +598,9 @@ class TestLoneAaEntryFallback:
         assert len(non_reasoning) == 1, result
         assert len(reasoning) == 1, result
         # Both rows reflect the `-medium` sibling's II=38.9, not the base II=41.2.
-        assert "38.900" in non_reasoning[0]
-        assert "38.900" in reasoning[0]
-        assert "41.200" not in result
+        assert "38.9" in non_reasoning[0]
+        assert "38.9" in reasoning[0]
+        assert "41.2" not in result
         # Both flagged with `*` and footnote present once.
         assert "(non-reasoning)`*" in non_reasoning[0]
         assert "(reasoning)`*" in reasoning[0]
@@ -626,7 +618,7 @@ class TestLoneAaEntryFallback:
                     "slug": "full-model",
                     "creator": "Acme",
                     "litellm_ids": ["provider/full-model"],
-                    "benchmarks": {"mmlu_pro": 0.80, "artificial_analysis_intelligence_index": 35.0},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 35.0},
                 },
                 "full-model-non-reasoning": {
                     "name": "Full Model (Non-reasoning)",
@@ -635,7 +627,7 @@ class TestLoneAaEntryFallback:
                     "litellm_ids": [],
                     "base_slug": "full-model",
                     "variant_type": "non-reasoning",
-                    "benchmarks": {"mmlu_pro": 0.70, "artificial_analysis_intelligence_index": 25.0},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 25.0},
                 },
             },
         }
@@ -654,8 +646,8 @@ class TestLoneAaEntryFallback:
         assert "`*" not in result
         assert self._FOOTNOTE not in result
         # Both modes carry their own distinct benchmarks.
-        assert "25.000" in result  # non-reasoning
-        assert "35.000" in result  # reasoning (base)
+        assert "25.0" in result  # non-reasoning
+        assert "35.0" in result  # reasoning (base)
 
     def test_reasoning_disabled_path_unchanged(self, tmp_path: Path) -> None:
         """Lone-base models with reasoning_allowed=False render a single plain row
@@ -678,7 +670,7 @@ class TestLoneAaEntryFallback:
         assert "(non-reasoning)" not in rows[0]
         assert "`*" not in result
         assert self._FOOTNOTE not in result
-        assert "33.100" in rows[0]
+        assert "33.1" in rows[0]
 
 
 class TestBuildNameMapping:
@@ -808,6 +800,79 @@ class TestDetectVariants:
         assert variants == {}
 
 
+def _aa_response(url: str, status: int, body: dict) -> requests.Response:
+    resp = requests.Response()
+    resp.status_code = status
+    resp.url = url
+    resp._content = json.dumps(body).encode()
+    return resp
+
+
+def _aa_page(slugs: list[str], has_more: bool) -> dict:
+    return {
+        "intelligence_index_version": 4.3,
+        "pagination": {"has_more": has_more},
+        "data": [{"slug": s} for s in slugs],
+    }
+
+
+class TestFetchAAModelsRemote:
+    def test_follows_pages_until_none_remain(self, monkeypatch) -> None:
+        from scripts import build_knowledge_base as bkb
+
+        pages: list[int] = []
+
+        def fake_get(url: str, *, params: dict, **_: object) -> requests.Response:
+            pages.append(params["page"])
+            return _aa_response(url, 200, _aa_page([f"m{params['page']}"], has_more=params["page"] < 2))
+
+        monkeypatch.setattr(bkb.requests, "get", fake_get)
+
+        models, meta = bkb._fetch_aa_models_remote("key")
+
+        assert [m["slug"] for m in models] == ["m1", "m2"]
+        assert pages == [1, 2]
+        assert meta == {"source_url": bkb.AA_API_URL, "intelligence_index_version": 4.3}
+
+    def test_http_error_is_raised(self, monkeypatch) -> None:
+        from scripts import build_knowledge_base as bkb
+
+        monkeypatch.setattr(bkb.requests, "get", lambda url, **_: _aa_response(url, 401, {"error": "bad key"}))
+
+        with pytest.raises(requests.HTTPError):
+            bkb._fetch_aa_models_remote("key")
+
+
+class TestBuildLlmKnowledgeBaseFromCache:
+    def test_reads_scores_speed_and_price_from_v2_records(self, tmp_path: Path, monkeypatch) -> None:
+        from scripts import build_knowledge_base as bkb
+
+        record = {
+            "slug": "model-v2",
+            "name": "Model V2",
+            "model_creator": {"name": "Acme"},
+            "evaluations": {"artificial_analysis_intelligence_index": 30.0},
+            "pricing": {"price_1m_input_tokens": 1.0, "price_1m_output_tokens": 2.0},
+            "performance": {"median_output_tokens_per_second": 90.0, "median_time_to_first_token_seconds": 0.5},
+        }
+        cache = {"fetched_at": "2026-01-01T00:00:00", "data": [record]}
+        (tmp_path / bkb.AA_CACHE_FILENAME).write_text(json.dumps(cache), encoding="utf-8")
+        monkeypatch.setattr(bkb, "_load_litellm_ids", list)
+
+        bkb.build_llm_knowledge_base(tmp_path, None, use_cache_only=True)
+
+        entry = yaml.safe_load((tmp_path / "llms.yaml").read_text(encoding="utf-8"))["models"]["model-v2"]
+        assert entry["creator"] == "Acme"
+        assert entry["benchmarks"] == {
+            "artificial_analysis_intelligence_index": 30.0,
+        }
+        assert entry["performance"] == {
+            "median_output_tokens_per_second": 90.0,
+            "median_time_to_first_token_seconds": 0.5,
+        }
+        assert entry["pricing"]["input_per_1m_tokens"] == 1.0
+
+
 class TestVariantLitellmIds:
     def test_variant_keeps_empty_litellm_ids(self) -> None:
         """Variants are unmatched in AA — they should keep their empty litellm_ids."""
@@ -839,7 +904,7 @@ class TestVariantIndex:
                     "slug": "gemini-2-5-flash",
                     "creator": "Google",
                     "litellm_ids": ["vertex_ai/gemini-2.5-flash"],
-                    "benchmarks": {"mmlu_pro": 0.72},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 72.0},
                 },
                 "gemini-2-5-flash-reasoning": {
                     "name": "Gemini 2.5 Flash (Reasoning)",
@@ -848,7 +913,7 @@ class TestVariantIndex:
                     "litellm_ids": [],
                     "base_slug": "gemini-2-5-flash",
                     "variant_type": "reasoning",
-                    "benchmarks": {"mmlu_pro": 0.82},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 82.0},
                 },
             },
         }
@@ -871,7 +936,7 @@ class TestVariantIndex:
                     "slug": "gemini-2-5-flash",
                     "creator": "Google",
                     "litellm_ids": ["vertex_ai/gemini-2.5-flash"],
-                    "benchmarks": {"mmlu_pro": 0.72},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 72.0},
                 },
                 "gemini-2-5-flash-reasoning": {
                     "name": "Gemini 2.5 Flash (Reasoning)",
@@ -880,7 +945,7 @@ class TestVariantIndex:
                     "litellm_ids": [],
                     "base_slug": "gemini-2-5-flash",
                     "variant_type": "reasoning",
-                    "benchmarks": {"mmlu_pro": 0.82},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 82.0},
                 },
             },
         }
@@ -902,8 +967,8 @@ class TestVariantIndex:
         assert "(non-reasoning)" in result
         assert "(reasoning)" in result
         # Base benchmarks (0.720) appear in non-reasoning row, not as the only row
-        assert "0.720" in result
-        assert "0.820" in result
+        assert "72.0" in result
+        assert "82.0" in result
 
     def test_format_for_prompt_single_plain_row_when_not_allowed(self, tmp_path: Path) -> None:
         """When reasoning is denied: single plain-name row with non-reasoning benchmarks."""
@@ -921,7 +986,7 @@ class TestVariantIndex:
         assert "(reasoning)" not in result
         assert "(non-reasoning)" not in result
         # Shows non-reasoning benchmarks (base entry: 0.72)
-        assert "0.720" in result
+        assert "72.0" in result
 
     def test_format_for_prompt_base_is_reasoning_default(self, tmp_path: Path) -> None:
         """When base is reasoning-default and non-reasoning variant exists (GLM-style)."""
@@ -933,7 +998,7 @@ class TestVariantIndex:
                     "slug": "glm-4-7-flash",
                     "creator": "Z AI",
                     "litellm_ids": ["bedrock/zai.glm-4.7-flash"],
-                    "benchmarks": {"mmlu_pro": 0.75},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 75.0},
                 },
                 "glm-4-7-flash-non-reasoning": {
                     "name": "GLM-4.7-Flash (Non-reasoning)",
@@ -942,7 +1007,7 @@ class TestVariantIndex:
                     "litellm_ids": [],
                     "base_slug": "glm-4-7-flash",
                     "variant_type": "non-reasoning",
-                    "benchmarks": {"mmlu_pro": 0.60},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 60.0},
                 },
             },
         }
@@ -960,8 +1025,8 @@ class TestVariantIndex:
         # Both rows shown
         assert "(non-reasoning)" in result
         assert "(reasoning)" in result
-        assert "0.600" in result  # non-reasoning variant
-        assert "0.750" in result  # base (reasoning default)
+        assert "60.0" in result  # non-reasoning variant
+        assert "75.0" in result  # base (reasoning default)
 
 
 class TestRankLlms:
@@ -985,20 +1050,19 @@ class TestRankLlms:
         assert ranked == ["vertex_ai/gemini-2.5-flash"]
         assert unknowns == ["ollama/unknown-model"]
 
-    def test_fair_average_fallback(self, tmp_path: Path) -> None:
-        """When Intel Index is missing, uses fair average of available benchmarks."""
+    def test_model_without_intelligence_index_ranks_weakest(self, tmp_path: Path) -> None:
         llm_data = {
             "_metadata": {"built_at": "2026-01-01T00:00:00", "matched_count": 2},
             "models": {
                 "model-a": {
                     "slug": "model-a",
                     "litellm_ids": ["provider/model-a"],
-                    "benchmarks": {"mmlu_pro": 0.80, "gpqa": 0.70},
+                    "benchmarks": {"artificial_analysis_intelligence_index": 20.0},
                 },
                 "model-b": {
                     "slug": "model-b",
                     "litellm_ids": ["provider/model-b"],
-                    "benchmarks": {"mmlu_pro": 0.60},
+                    "benchmarks": {"artificial_analysis_intelligence_index": None},
                 },
             },
         }
@@ -1008,9 +1072,7 @@ class TestRankLlms:
         kb = KnowledgeBase(kb_dir=tmp_path)
         ranked, _ = kb.rank_llms(["provider/model-a", "provider/model-b"])
 
-        # model-b avg(0.60)*50 = 30.0, model-a avg(0.80, 0.70)*50 = 37.5
-        assert ranked[0] == "provider/model-b"
-        assert ranked[1] == "provider/model-a"
+        assert ranked == ["provider/model-b", "provider/model-a"]
 
     def test_empty_list(self, tmp_path: Path) -> None:
         _write_kb(tmp_path)

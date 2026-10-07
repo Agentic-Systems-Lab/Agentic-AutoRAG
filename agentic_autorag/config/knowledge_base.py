@@ -34,6 +34,10 @@ _MANAGED_CLOUD_PROVIDERS = frozenset(
 # anchors on the top rank nor swings to cheap/weak models. The cost-aware
 # variant may reference cheaper models; the score-only variant omits cost so it
 # does not inject a non-objective into a score-only run.
+_AA_INDEX_NOTE = (
+    "AA Intelligence Index: Artificial Analysis's composite score across its general-purpose "
+    "model evaluations; higher is better. It is not specific to retrieval-augmented generation."
+)
 _KB_CAVEAT_COST_AWARE = (
     "These tables are general, off-corpus benchmarks — a prior for shortlisting "
     "which models to try, not a guarantee of accuracy on THIS corpus. Let trial "
@@ -357,17 +361,21 @@ class KnowledgeBase:
             "LiteLLM Name",
             "Creator",
             "Released",
-            "Intel. Index",
-            "MMLU Pro",
-            "GPQA",
-            "IFBench",
+            "AA Intelligence Index",
         ]
         if cost_aware:
             cols += ["Input $/1M", "Output $/1M", "Tokens/s"]
         cols.append("Max Input")
         if reasoning_enabled:
             cols.append("Supports Reasoning")
-        lines = ["### LLM Models", "", "| " + " | ".join(cols) + " |", "|" + "|".join("---" for _ in cols) + "|"]
+        lines = [
+            "### LLM Models",
+            "",
+            _AA_INDEX_NOTE,
+            "",
+            "| " + " | ".join(cols) + " |",
+            "|" + "|".join("---" for _ in cols) + "|",
+        ]
         any_fallback = False
         for r in rows:
             b = r.get("benchmarks") or {}
@@ -381,10 +389,7 @@ class KnowledgeBase:
                 f"`{r['litellm_name']}`{marker}",
                 r.get("creator", "—"),
                 r.get("release_date") or "—",
-                _fmt(b.get("artificial_analysis_intelligence_index")),
-                _fmt(b.get("mmlu_pro")),
-                _fmt(b.get("gpqa")),
-                _fmt(b.get("ifbench")),
+                _fmt(b.get("artificial_analysis_intelligence_index"), decimals=1),
             ]
             if cost_aware:
                 cells += [
@@ -399,7 +404,9 @@ class KnowledgeBase:
 
         if any_fallback:
             lines.append("")
-            lines.append("\\* Same benchmarks shown for both modes — AA published only one measurement for this model.")
+            lines.append(
+                "\\* Same Intelligence Index shown for both modes — AA published only one measurement for this model."
+            )
 
         return "\n".join(lines)
 
@@ -500,10 +507,7 @@ class KnowledgeBase:
         ``"low"``, ``"medium"``, ``"high"``). Falls back to the base
         entry when no variant exists.
 
-        Prefers Intelligence Index (pre-computed aggregate on ~0-50 scale).
-        Falls back to mean of available benchmarks (MMLU Pro, GPQA, IFBench)
-        scaled to a comparable range. Only averages over benchmarks present
-        for this model so models with missing fields are not penalised.
+        The score is the Intelligence Index; an entry without one scores 0.0.
         """
         scored_entry = self._select_variant_entry(entry, reasoning_allowed, reasoning_effort)
         b = scored_entry.get("benchmarks") or {}
@@ -513,20 +517,7 @@ class KnowledgeBase:
                 return float(intel_idx)
             except (TypeError, ValueError):
                 pass
-
-        # Fair average of available 0-1 benchmarks, scaled to ~0-50 range
-        benchmark_keys = ("mmlu_pro", "gpqa", "ifbench")
-        values = []
-        for key in benchmark_keys:
-            v = b.get(key)
-            if v is not None:
-                try:
-                    values.append(float(v))
-                except (TypeError, ValueError):
-                    continue
-        if not values:
-            return 0.0
-        return sum(values) / len(values) * 50.0  # scale 0-1 average to ~0-50
+        return 0.0
 
     def _select_variant_entry(
         self,

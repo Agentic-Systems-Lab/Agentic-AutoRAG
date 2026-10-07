@@ -130,7 +130,7 @@ To see the block the agent reads for your config:
 uv run python scripts/show_knowledge_base.py configs/my_project.yaml
 ```
 
-To refresh the LLM and embedding tables from their sources (needs `ARTIFICIAL_ANALYSIS_API_KEY`):
+To refresh the LLM and embedding tables from their sources (needs `ARTIFICIAL_ANALYSIS_API_KEY`; a Free-tier key is enough):
 
 ```bash
 uv run python scripts/build_knowledge_base.py
