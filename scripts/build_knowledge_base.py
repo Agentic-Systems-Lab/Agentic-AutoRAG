@@ -62,6 +62,9 @@ EMBEDDING_BENCHMARK = "MTEB(eng, v2)"
 # a model. The knowledge base averages the tasks the model did run instead, as
 # long as it covers at least this share of the type's tasks.
 MIN_TASK_COVERAGE = 0.5
+# Parameter counts are stored in billions at the leaderboard's precision.
+PARAMS_PER_BILLION = 1e9
+PARAMETER_DECIMALS = 3
 AA_API_URL = "https://artificialanalysis.ai/api/v2/data/llms/models"
 AA_CACHE_FILENAME = "_aa_response_cache.json"
 
@@ -374,6 +377,33 @@ def _model_memory_mb(hf_id: str) -> float | None:
         return None
 
 
+def _embedding_entry(
+    hf_id: str,
+    type_means: dict[str, dict[str, tuple[float, float]]],
+    *,
+    parameters_billions: float | None,
+    memory_usage_mb: float | None,
+    embedding_dimensions: float | None,
+    max_tokens: float | None,
+) -> dict:
+    scores: dict[str, float | None] = {}
+    coverage: dict[str, float] = {}
+    for task_kind in EMBEDDING_TASKS:
+        mean_and_coverage = type_means.get(hf_id, {}).get(task_kind)
+        scores[task_kind.lower()] = round(mean_and_coverage[0], 4) if mean_and_coverage else None
+        if mean_and_coverage:
+            coverage[task_kind.lower()] = round(mean_and_coverage[1], 2)
+    return {
+        "hf_id": hf_id,
+        "parameters_billions": parameters_billions,
+        "memory_usage_mb": memory_usage_mb,
+        "embedding_dimensions": int(embedding_dimensions) if embedding_dimensions is not None else None,
+        "max_tokens": int(max_tokens) if max_tokens is not None else None,
+        "scores": scores,
+        "score_coverage": coverage,
+    }
+
+
 def build_embedding_knowledge_base(output_dir: Path) -> None:
     """Fetch MTEB results and write knowledge_base/embeddings.yaml."""
     import mteb  # noqa: PLC0415
@@ -398,26 +428,42 @@ def build_embedding_knowledge_base(output_dir: Path) -> None:
         if not hf_id:
             continue
 
-        dim_raw = _to_float(row.get("Embedding Dimensions"))
-        tok_raw = _to_float(row.get("Max Tokens"))
+        models_out[hf_id] = _embedding_entry(
+            hf_id,
+            type_means,
+            parameters_billions=_to_float(row.get("Total Parameters (B)")),
+            memory_usage_mb=_model_memory_mb(hf_id),
+            embedding_dimensions=_to_float(row.get("Embedding Dimensions")),
+            max_tokens=_to_float(row.get("Max Tokens")),
+        )
 
-        scores: dict[str, float | None] = {}
-        coverage: dict[str, float] = {}
-        for task_kind in EMBEDDING_TASKS:
-            mean_and_coverage = type_means.get(hf_id, {}).get(task_kind)
-            scores[task_kind.lower()] = round(mean_and_coverage[0], 4) if mean_and_coverage else None
-            if mean_and_coverage:
-                coverage[task_kind.lower()] = round(mean_and_coverage[1], 2)
-
-        models_out[hf_id] = {
-            "hf_id": hf_id,
-            "parameters_billions": _to_float(row.get("Total Parameters (B)")),
-            "memory_usage_mb": _model_memory_mb(hf_id),
-            "embedding_dimensions": int(dim_raw) if dim_raw is not None else None,
-            "max_tokens": int(tok_raw) if tok_raw is not None else None,
-            "scores": scores,
-            "score_coverage": coverage,
-        }
+    # The leaderboard frame only lists models the installed mteb registry knows,
+    # so models added or renamed upstream after that release are missing from it.
+    # Their results carry the model's metadata alongside the scores.
+    for model_result in results.model_results:
+        hf_id = model_result.model_name
+        if hf_id in models_out or not any(t in type_means.get(hf_id, {}) for t in EMBEDDING_TASKS):
+            continue
+        meta_path = (
+            cache.get_task_result_path(
+                model_result.task_results[0].task_name, hf_id, model_result.model_revision, remote=True
+            ).parent
+            / "model_meta.json"
+        )
+        with open(meta_path, encoding="utf-8") as f:
+            meta = json.load(f)
+        n_parameters = _to_float(meta.get("n_parameters"))
+        models_out[hf_id] = _embedding_entry(
+            hf_id,
+            type_means,
+            parameters_billions=round(n_parameters / PARAMS_PER_BILLION, PARAMETER_DECIMALS)
+            if n_parameters is not None
+            else None,
+            memory_usage_mb=_to_float(meta.get("memory_usage_mb")),
+            embedding_dimensions=_to_float(meta.get("embed_dim")),
+            max_tokens=_to_float(meta.get("max_tokens")),
+        )
+    logger.info("  Kept %d models (%d from the leaderboard frame)", len(models_out), len(df))
 
     output = {
         "_metadata": {

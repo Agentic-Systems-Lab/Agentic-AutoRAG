@@ -1,7 +1,7 @@
 _metadata:
-  built_at: '2026-09-09T20:31:00.620094+00:00'
+  built_at: '2026-10-07T21:10:03.034340+00:00'
   benchmark: MTEB(eng, v2)
-  model_count: 327
+  model_count: 325
   tasks_included:
   - Retrieval
   - STS
@@ -194,20 +194,6 @@ models:
     hf_id: jinaai/jina-embeddings-v5-omni-small
     parameters_billions: 1.626
     memory_usage_mb: 3102.0
-    embedding_dimensions: 1024
-    max_tokens: 32768
-    scores:
-      retrieval: 0.6007
-      sts: 0.8813
-      reranking: 0.4938
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
-  jinaai/jina-embeddings-v5-text-small:
-    hf_id: jinaai/jina-embeddings-v5-text-small
-    parameters_billions: 0.596
-    memory_usage_mb: 1137.0
     embedding_dimensions: 1024
     max_tokens: 32768
     scores:
@@ -540,6 +526,20 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  jinaai/jina-embeddings-v5-text-small:
+    hf_id: jinaai/jina-embeddings-v5-text-small
+    parameters_billions: 0.596
+    memory_usage_mb: 1137.0
+    embedding_dimensions: 1024
+    max_tokens: 32768
+    scores:
+      retrieval: 0.6007
+      sts: 0.8813
+      reranking: 0.4938
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
   intfloat/e5-mistral-7b-instruct:
     hf_id: intfloat/e5-mistral-7b-instruct
     parameters_billions: 7.111
@@ -736,20 +736,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  GritLM/GritLM-8x7B:
-    hf_id: GritLM/GritLM-8x7B
-    parameters_billions: 57.92
-    memory_usage_mb: 89079.0
-    embedding_dimensions: 32768
-    max_tokens: 32768
-    scores:
-      retrieval: 0.5246
-      sts: 0.8293
-      reranking: 0.4922
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   WhereIsAI/UAE-Large-V1:
     hf_id: WhereIsAI/UAE-Large-V1
     parameters_billions: 0.335
@@ -760,6 +746,20 @@ models:
       retrieval: 0.5591
       sts: 0.8437
       reranking: 0.4835
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  GritLM/GritLM-8x7B:
+    hf_id: GritLM/GritLM-8x7B
+    parameters_billions: 57.92
+    memory_usage_mb: 89079.0
+    embedding_dimensions: 32768
+    max_tokens: 32768
+    scores:
+      retrieval: 0.5246
+      sts: 0.8293
+      reranking: 0.4922
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -820,18 +820,18 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-3-m-exp:
-    hf_id: voyageai/voyage-3-m-exp
-    parameters_billions: 6.918
-    memory_usage_mb: null
-    embedding_dimensions: 2048
-    max_tokens: 32000
+  intfloat/multilingual-e5-large-instruct:
+    hf_id: intfloat/multilingual-e5-large-instruct
+    parameters_billions: 0.56
+    memory_usage_mb: 1068.0
+    embedding_dimensions: 1024
+    max_tokens: 514
     scores:
-      retrieval: 0.7261
-      sts: 0.8396
-      reranking: 0.4831
+      retrieval: 0.5347
+      sts: 0.8472
+      reranking: 0.4874
     score_coverage:
-      retrieval: 0.6
+      retrieval: 1.0
       sts: 1.0
       reranking: 1.0
   avsolatorio/GIST-Embedding-v0:
@@ -844,20 +844,6 @@ models:
       retrieval: 0.5359
       sts: 0.8335
       reranking: 0.4752
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
-  intfloat/multilingual-e5-large-instruct:
-    hf_id: intfloat/multilingual-e5-large-instruct
-    parameters_billions: 0.56
-    memory_usage_mb: 1068.0
-    embedding_dimensions: 1024
-    max_tokens: 514
-    scores:
-      retrieval: 0.5347
-      sts: 0.8472
-      reranking: 0.4874
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -890,20 +876,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  avsolatorio/GIST-small-Embedding-v0:
-    hf_id: avsolatorio/GIST-small-Embedding-v0
-    parameters_billions: 0.033
-    memory_usage_mb: 127.0
-    embedding_dimensions: 384
-    max_tokens: 512
-    scores:
-      retrieval: 0.52
-      sts: 0.828
-      reranking: 0.4735
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   infgrad/stella-base-en-v2:
     hf_id: infgrad/stella-base-en-v2
     parameters_billions: 0.109
@@ -914,6 +886,20 @@ models:
       retrieval: 0.5156
       sts: 0.8273
       reranking: 0.4731
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  avsolatorio/GIST-small-Embedding-v0:
+    hf_id: avsolatorio/GIST-small-Embedding-v0
+    parameters_billions: 0.033
+    memory_usage_mb: 127.0
+    embedding_dimensions: 384
+    max_tokens: 512
+    scores:
+      retrieval: 0.52
+      sts: 0.828
+      reranking: 0.4735
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -932,20 +918,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  Tarka-AIR/Tarka-Embedding-150M-V1:
-    hf_id: Tarka-AIR/Tarka-Embedding-150M-V1
-    parameters_billions: 0.156
-    memory_usage_mb: 576.0
-    embedding_dimensions: 768
-    max_tokens: 2048
-    scores:
-      retrieval: 0.5152
-      sts: 0.8148
-      reranking: 0.4566
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   avsolatorio/NoInstruct-small-Embedding-v0:
     hf_id: avsolatorio/NoInstruct-small-Embedding-v0
     parameters_billions: 0.033
@@ -956,6 +928,20 @@ models:
       retrieval: 0.5371
       sts: 0.8275
       reranking: 0.4702
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  Tarka-AIR/Tarka-Embedding-150M-V1:
+    hf_id: Tarka-AIR/Tarka-Embedding-150M-V1
+    parameters_billions: 0.156
+    memory_usage_mb: 576.0
+    embedding_dimensions: 768
+    max_tokens: 2048
+    scores:
+      retrieval: 0.5152
+      sts: 0.8148
+      reranking: 0.4566
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -1072,20 +1058,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  Haon-Chen/speed-embedding-7b-instruct:
-    hf_id: Haon-Chen/speed-embedding-7b-instruct
-    parameters_billions: 7.111
-    memory_usage_mb: 13563.0
-    embedding_dimensions: null
-    max_tokens: 32768
-    scores:
-      retrieval: 0.3906
-      sts: 0.8474
-      reranking: 0.5029
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   MongoDB/mdbr-leaf-mt:
     hf_id: MongoDB/mdbr-leaf-mt
     parameters_billions: 0.023
@@ -1096,6 +1068,20 @@ models:
       retrieval: 0.5138
       sts: 0.8258
       reranking: 0.4731
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  Haon-Chen/speed-embedding-7b-instruct:
+    hf_id: Haon-Chen/speed-embedding-7b-instruct
+    parameters_billions: 7.111
+    memory_usage_mb: 13563.0
+    embedding_dimensions: null
+    max_tokens: 32768
+    scores:
+      retrieval: 0.3906
+      sts: 0.8474
+      reranking: 0.5029
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -1142,17 +1128,18 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-large-2-instruct:
-    hf_id: voyageai/voyage-large-2-instruct
-    parameters_billions: null
-    memory_usage_mb: null
+  sdadas/mmlw-e5-large:
+    hf_id: sdadas/mmlw-e5-large
+    parameters_billions: 0.56
+    memory_usage_mb: 2136.0
     embedding_dimensions: 1024
-    max_tokens: 16000
+    max_tokens: 514
     scores:
-      retrieval: null
-      sts: 0.8281
-      reranking: 0.5009
+      retrieval: 0.4137
+      sts: 0.8135
+      reranking: 0.4763
     score_coverage:
+      retrieval: 1.0
       sts: 1.0
       reranking: 1.0
   BAAI/bge-small-en-v1.5:
@@ -1165,20 +1152,6 @@ models:
       retrieval: 0.5386
       sts: 0.8128
       reranking: 0.4694
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
-  sdadas/mmlw-e5-large:
-    hf_id: sdadas/mmlw-e5-large
-    parameters_billions: 0.56
-    memory_usage_mb: 2136.0
-    embedding_dimensions: 1024
-    max_tokens: 514
-    scores:
-      retrieval: 0.4137
-      sts: 0.8135
-      reranking: 0.4763
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -1196,20 +1169,6 @@ models:
     score_coverage:
       retrieval: 1.0
       sts: 1.0
-  abhinand/MedEmbed-small-v0.1:
-    hf_id: abhinand/MedEmbed-small-v0.1
-    parameters_billions: 0.033
-    memory_usage_mb: 127.0
-    embedding_dimensions: 384
-    max_tokens: 512
-    scores:
-      retrieval: 0.5285
-      sts: 0.8128
-      reranking: 0.472
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   sdadas/mmlw-roberta-large:
     hf_id: sdadas/mmlw-roberta-large
     parameters_billions: 0.435
@@ -1220,6 +1179,20 @@ models:
       retrieval: 0.3969
       sts: 0.812
       reranking: 0.4756
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  abhinand/MedEmbed-small-v0.1:
+    hf_id: abhinand/MedEmbed-small-v0.1
+    parameters_billions: 0.033
+    memory_usage_mb: 127.0
+    embedding_dimensions: 384
+    max_tokens: 512
+    scores:
+      retrieval: 0.5285
+      sts: 0.8128
+      reranking: 0.472
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -1476,20 +1449,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  TencentBAC/Conan-embedding-v2:
-    hf_id: TencentBAC/Conan-embedding-v2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 3584
-    max_tokens: 32768
-    scores:
-      retrieval: 0.6525
-      sts: 0.8711
-      reranking: 0.4907
-    score_coverage:
-      retrieval: 0.6
-      sts: 0.89
-      reranking: 1.0
   ibm-granite/granite-embedding-125m-english:
     hf_id: ibm-granite/granite-embedding-125m-english
     parameters_billions: 0.125
@@ -1531,6 +1490,20 @@ models:
     score_coverage:
       retrieval: 1.0
       sts: 1.0
+      reranking: 1.0
+  TencentBAC/Conan-embedding-v2:
+    hf_id: TencentBAC/Conan-embedding-v2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 3584
+    max_tokens: 32768
+    scores:
+      retrieval: 0.6525
+      sts: 0.8711
+      reranking: 0.4907
+    score_coverage:
+      retrieval: 0.6
+      sts: 0.89
       reranking: 1.0
   hotchpotch/bekko-embedding-v1-a25m:
     hf_id: hotchpotch/bekko-embedding-v1-a25m
@@ -1755,20 +1728,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-3:
-    hf_id: voyageai/voyage-3
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: 0.5346
-      sts: 0.7859
-      reranking: 0.4672
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
   izhx/udever-bloom-7b1:
     hf_id: izhx/udever-bloom-7b1
     parameters_billions: null
@@ -1909,20 +1868,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-multilingual-2:
-    hf_id: voyageai/voyage-multilingual-2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: 0.5599
-      sts: 0.7698
-      reranking: 0.474
-    score_coverage:
-      retrieval: 0.7
-      sts: 1.0
-      reranking: 1.0
   ibm-granite/granite-embedding-30m-english:
     hf_id: ibm-granite/granite-embedding-30m-english
     parameters_billions: 0.03
@@ -1965,33 +1910,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-3-lite:
-    hf_id: voyageai/voyage-3-lite
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 512
-    max_tokens: 32000
-    scores:
-      retrieval: 0.503
-      sts: 0.772
-      reranking: 0.462
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
-      reranking: 1.0
-  BAAI/bge-en-icl:
-    hf_id: BAAI/bge-en-icl
-    parameters_billions: 7.11
-    memory_usage_mb: 27125.0
-    embedding_dimensions: 4096
-    max_tokens: 32768
-    scores:
-      retrieval: null
-      sts: 0.8567
-      reranking: 0.4788
-    score_coverage:
-      sts: 0.89
-      reranking: 1.0
   Haon-Chen/e5-omni-3B:
     hf_id: Haon-Chen/e5-omni-3B
     parameters_billions: 4.703
@@ -2020,6 +1938,19 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  BAAI/bge-en-icl:
+    hf_id: BAAI/bge-en-icl
+    parameters_billions: 7.11
+    memory_usage_mb: 27125.0
+    embedding_dimensions: 4096
+    max_tokens: 32768
+    scores:
+      retrieval: null
+      sts: 0.8567
+      reranking: 0.4788
+    score_coverage:
+      sts: 0.89
+      reranking: 1.0
   brahmairesearch/slx-v0.1:
     hf_id: brahmairesearch/slx-v0.1
     parameters_billions: 0.023
@@ -2030,6 +1961,20 @@ models:
       retrieval: 0.4292
       sts: 0.7895
       reranking: 0.4714
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  ibm-granite/granite-embedding-278m-multilingual:
+    hf_id: ibm-granite/granite-embedding-278m-multilingual
+    parameters_billions: 0.278
+    memory_usage_mb: 530.0
+    embedding_dimensions: 768
+    max_tokens: 512
+    scores:
+      retrieval: 0.5145
+      sts: 0.7655
+      reranking: 0.4644
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -2047,20 +1992,6 @@ models:
     score_coverage:
       retrieval: 0.6
       sts: 0.89
-      reranking: 1.0
-  ibm-granite/granite-embedding-278m-multilingual:
-    hf_id: ibm-granite/granite-embedding-278m-multilingual
-    parameters_billions: 0.278
-    memory_usage_mb: 530.0
-    embedding_dimensions: 768
-    max_tokens: 512
-    scores:
-      retrieval: 0.5145
-      sts: 0.7655
-      reranking: 0.4644
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
       reranking: 1.0
   izhx/udever-bloom-3b:
     hf_id: izhx/udever-bloom-3b
@@ -2160,6 +2091,20 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
+  sentence-transformers/all-MiniLM-L12-v2:
+    hf_id: sentence-transformers/all-MiniLM-L12-v2
+    parameters_billions: 0.033
+    memory_usage_mb: 127.0
+    embedding_dimensions: 384
+    max_tokens: 256
+    scores:
+      retrieval: 0.4367
+      sts: 0.7979
+      reranking: 0.4754
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
   zeta-alpha-ai/Zeta-Alpha-E5-Mistral:
     hf_id: zeta-alpha-ai/Zeta-Alpha-E5-Mistral
     parameters_billions: 7.111
@@ -2173,16 +2118,16 @@ models:
     score_coverage:
       sts: 0.89
       reranking: 1.0
-  sentence-transformers/all-MiniLM-L12-v2:
-    hf_id: sentence-transformers/all-MiniLM-L12-v2
-    parameters_billions: 0.033
-    memory_usage_mb: 127.0
+  Snowflake/snowflake-arctic-embed-xs:
+    hf_id: Snowflake/snowflake-arctic-embed-xs
+    parameters_billions: 0.023
+    memory_usage_mb: 86.0
     embedding_dimensions: 384
-    max_tokens: 256
+    max_tokens: 512
     scores:
-      retrieval: 0.4367
-      sts: 0.7979
-      reranking: 0.4754
+      retrieval: 0.5265
+      sts: 0.7621
+      reranking: 0.4526
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -2201,16 +2146,16 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  Snowflake/snowflake-arctic-embed-xs:
-    hf_id: Snowflake/snowflake-arctic-embed-xs
-    parameters_billions: 0.023
-    memory_usage_mb: 86.0
-    embedding_dimensions: 384
+  jinaai/jina-embedding-b-en-v1:
+    hf_id: jinaai/jina-embedding-b-en-v1
+    parameters_billions: 0.11
+    memory_usage_mb: 420.0
+    embedding_dimensions: 768
     max_tokens: 512
     scores:
-      retrieval: 0.5265
-      sts: 0.7621
-      reranking: 0.4526
+      retrieval: 0.4638
+      sts: 0.8
+      reranking: 0.4698
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -2227,20 +2172,6 @@ models:
       reranking: 0.4819
     score_coverage:
       sts: 0.89
-      reranking: 1.0
-  jinaai/jina-embedding-b-en-v1:
-    hf_id: jinaai/jina-embedding-b-en-v1
-    parameters_billions: 0.11
-    memory_usage_mb: 420.0
-    embedding_dimensions: 768
-    max_tokens: 512
-    scores:
-      retrieval: 0.4638
-      sts: 0.8
-      reranking: 0.4698
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
       reranking: 1.0
   Omartificial-Intelligence-Space/Arabic-all-nli-triplet-Matryoshka:
     hf_id: Omartificial-Intelligence-Space/Arabic-all-nli-triplet-Matryoshka
@@ -2270,18 +2201,6 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  Octen/Octen-Embedding-8B:
-    hf_id: Octen/Octen-Embedding-8B
-    parameters_billions: 7.567
-    memory_usage_mb: 14433.0
-    embedding_dimensions: 4096
-    max_tokens: 32768
-    scores:
-      retrieval: null
-      sts: 0.8936
-      reranking: null
-    score_coverage:
-      sts: 0.89
   Mihaiii/Bulbasaur:
     hf_id: Mihaiii/Bulbasaur
     parameters_billions: 0.017
@@ -2324,15 +2243,15 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  microsoft/harrier-oss-v1-27b:
-    hf_id: microsoft/harrier-oss-v1-27b
-    parameters_billions: 27.009
-    memory_usage_mb: 51515.0
-    embedding_dimensions: 5376
-    max_tokens: 131072
+  Octen/Octen-Embedding-8B:
+    hf_id: Octen/Octen-Embedding-8B
+    parameters_billions: 7.567
+    memory_usage_mb: 14433.0
+    embedding_dimensions: 4096
+    max_tokens: 32768
     scores:
       retrieval: null
-      sts: 0.8701
+      sts: 0.8936
       reranking: null
     score_coverage:
       sts: 0.89
@@ -2350,6 +2269,18 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  microsoft/harrier-oss-v1-27b:
+    hf_id: microsoft/harrier-oss-v1-27b
+    parameters_billions: 27.009
+    memory_usage_mb: 51515.0
+    embedding_dimensions: 5376
+    max_tokens: 131072
+    scores:
+      retrieval: null
+      sts: 0.8701
+      reranking: null
+    score_coverage:
+      sts: 0.89
   Gameselo/STS-multilingual-mpnet-base-v2:
     hf_id: Gameselo/STS-multilingual-mpnet-base-v2
     parameters_billions: 0.278
@@ -2378,18 +2309,20 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-code-3:
-    hf_id: voyageai/voyage-code-3
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
+  jinaai/jina-embeddings-v2-base-en:
+    hf_id: jinaai/jina-embeddings-v2-base-en
+    parameters_billions: 0.137
+    memory_usage_mb: 262.0
+    embedding_dimensions: 768
+    max_tokens: 8192
     scores:
-      retrieval: null
-      sts: 0.8238
-      reranking: null
+      retrieval: 0.2667
+      sts: 0.7415
+      reranking: 0.4639
     score_coverage:
+      retrieval: 1.0
       sts: 1.0
+      reranking: 1.0
   nvidia/llama-embed-nemotron-8b:
     hf_id: nvidia/llama-embed-nemotron-8b
     parameters_billions: 7.505
@@ -2402,16 +2335,16 @@ models:
       reranking: null
     score_coverage:
       sts: 0.89
-  jinaai/jina-embeddings-v2-base-en:
-    hf_id: jinaai/jina-embeddings-v2-base-en
-    parameters_billions: 0.137
-    memory_usage_mb: 262.0
-    embedding_dimensions: 768
-    max_tokens: 8192
+  manu/sentence_croissant_alpha_v0.4:
+    hf_id: manu/sentence_croissant_alpha_v0.4
+    parameters_billions: 1.28
+    memory_usage_mb: 2441.0
+    embedding_dimensions: 2048
+    max_tokens: 2048
     scores:
-      retrieval: 0.2667
-      sts: 0.7415
-      reranking: 0.4639
+      retrieval: 0.4318
+      sts: 0.7534
+      reranking: 0.4465
     score_coverage:
       retrieval: 1.0
       sts: 1.0
@@ -2429,20 +2362,6 @@ models:
     score_coverage:
       retrieval: 0.9
       sts: 0.89
-      reranking: 1.0
-  manu/sentence_croissant_alpha_v0.4:
-    hf_id: manu/sentence_croissant_alpha_v0.4
-    parameters_billions: 1.28
-    memory_usage_mb: 2441.0
-    embedding_dimensions: 2048
-    max_tokens: 2048
-    scores:
-      retrieval: 0.4318
-      sts: 0.7534
-      reranking: 0.4465
-    score_coverage:
-      retrieval: 1.0
-      sts: 1.0
       reranking: 1.0
   Alibaba-NLP/gme-Qwen2-VL-7B-Instruct:
     hf_id: Alibaba-NLP/gme-Qwen2-VL-7B-Instruct
@@ -2486,18 +2405,6 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  microsoft/harrier-oss-v1-0.6b:
-    hf_id: microsoft/harrier-oss-v1-0.6b
-    parameters_billions: 0.596
-    memory_usage_mb: 1137.0
-    embedding_dimensions: 1024
-    max_tokens: 32768
-    scores:
-      retrieval: null
-      sts: 0.8472
-      reranking: null
-    score_coverage:
-      sts: 0.89
   HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1.5:
     hf_id: HIT-TMG/KaLM-embedding-multilingual-mini-instruct-v1.5
     parameters_billions: 0.494
@@ -2526,27 +2433,15 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  voyageai/voyage-law-2:
-    hf_id: voyageai/voyage-law-2
-    parameters_billions: null
-    memory_usage_mb: null
+  microsoft/harrier-oss-v1-0.6b:
+    hf_id: microsoft/harrier-oss-v1-0.6b
+    parameters_billions: 0.596
+    memory_usage_mb: 1137.0
     embedding_dimensions: 1024
-    max_tokens: 16000
-    scores:
-      retrieval: null
-      sts: 0.8342
-      reranking: null
-    score_coverage:
-      sts: 0.89
-  tencent/KaLM-Embedding-Gemma3-12B-2511:
-    hf_id: tencent/KaLM-Embedding-Gemma3-12B-2511
-    parameters_billions: 11.766
-    memory_usage_mb: 44884.0
-    embedding_dimensions: 3840
     max_tokens: 32768
     scores:
       retrieval: null
-      sts: 0.8452
+      sts: 0.8472
       reranking: null
     score_coverage:
       sts: 0.89
@@ -2578,15 +2473,15 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  Bytedance/Seed1.6-embedding-1215:
-    hf_id: Bytedance/Seed1.6-embedding-1215
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 2048
+  tencent/KaLM-Embedding-Gemma3-12B-2511:
+    hf_id: tencent/KaLM-Embedding-Gemma3-12B-2511
+    parameters_billions: 11.766
+    memory_usage_mb: 44884.0
+    embedding_dimensions: 3840
     max_tokens: 32768
     scores:
       retrieval: null
-      sts: 0.8636
+      sts: 0.8452
       reranking: null
     score_coverage:
       sts: 0.89
@@ -2604,6 +2499,18 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
+  Bytedance/Seed1.6-embedding-1215:
+    hf_id: Bytedance/Seed1.6-embedding-1215
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 2048
+    max_tokens: 32768
+    scores:
+      retrieval: null
+      sts: 0.8636
+      reranking: null
+    score_coverage:
+      sts: 0.89
   Alibaba-NLP/gte-base-en-v1.5:
     hf_id: Alibaba-NLP/gte-base-en-v1.5
     parameters_billions: 0.137
@@ -2646,20 +2553,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  BAAI/bge-base-en:
-    hf_id: BAAI/bge-base-en
-    parameters_billions: 0.109
-    memory_usage_mb: 390.0
-    embedding_dimensions: 768
-    max_tokens: 512
-    scores:
-      retrieval: 0.4992
-      sts: 0.8347
-      reranking: 0.4649
-    score_coverage:
-      retrieval: 0.6
-      sts: 0.89
-      reranking: 1.0
   jinaai/jina-embeddings-v2-small-en:
     hf_id: jinaai/jina-embeddings-v2-small-en
     parameters_billions: 0.033
@@ -2687,6 +2580,20 @@ models:
     score_coverage:
       retrieval: 1.0
       sts: 1.0
+      reranking: 1.0
+  BAAI/bge-base-en:
+    hf_id: BAAI/bge-base-en
+    parameters_billions: 0.109
+    memory_usage_mb: 390.0
+    embedding_dimensions: 768
+    max_tokens: 512
+    scores:
+      retrieval: 0.4992
+      sts: 0.8347
+      reranking: 0.4649
+    score_coverage:
+      retrieval: 0.6
+      sts: 0.89
       reranking: 1.0
   Alibaba-NLP/gme-Qwen2-VL-2B-Instruct:
     hf_id: Alibaba-NLP/gme-Qwen2-VL-2B-Instruct
@@ -2744,20 +2651,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  nomic-ai/modernbert-embed-base:
-    hf_id: nomic-ai/modernbert-embed-base
-    parameters_billions: 0.149
-    memory_usage_mb: 568.0
-    embedding_dimensions: 768
-    max_tokens: 8192
-    scores:
-      retrieval: 0.4918
-      sts: 0.8324
-      reranking: 0.4648
-    score_coverage:
-      retrieval: 0.6
-      sts: 0.89
-      reranking: 1.0
   Omartificial-Intelligence-Space/Arabic-labse-Matryoshka:
     hf_id: Omartificial-Intelligence-Space/Arabic-labse-Matryoshka
     parameters_billions: 0.471
@@ -2771,6 +2664,20 @@ models:
     score_coverage:
       retrieval: 1.0
       sts: 1.0
+      reranking: 1.0
+  nomic-ai/modernbert-embed-base:
+    hf_id: nomic-ai/modernbert-embed-base
+    parameters_billions: 0.149
+    memory_usage_mb: 568.0
+    embedding_dimensions: 768
+    max_tokens: 8192
+    scores:
+      retrieval: 0.4918
+      sts: 0.8324
+      reranking: 0.4648
+    score_coverage:
+      retrieval: 0.6
+      sts: 0.89
       reranking: 1.0
   minishlab/potion-base-32M:
     hf_id: minishlab/potion-base-32M
@@ -2814,18 +2721,6 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  Mira190/Euler-Legal-Embedding-V1:
-    hf_id: Mira190/Euler-Legal-Embedding-V1
-    parameters_billions: 7.567
-    memory_usage_mb: 15618.0
-    embedding_dimensions: 4096
-    max_tokens: 1536
-    scores:
-      retrieval: null
-      sts: 0.8433
-      reranking: null
-    score_coverage:
-      sts: 0.89
   jinaai/jina-embedding-s-en-v1:
     hf_id: jinaai/jina-embedding-s-en-v1
     parameters_billions: 0.035
@@ -2840,18 +2735,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  BidirLM/BidirLM-1.7B-Embedding:
-    hf_id: BidirLM/BidirLM-1.7B-Embedding
-    parameters_billions: 1.721
-    memory_usage_mb: 3282.0
-    embedding_dimensions: 2048
-    max_tokens: 8192
-    scores:
-      retrieval: null
-      sts: 0.8341
-      reranking: null
-    score_coverage:
-      sts: 0.89
   shibing624/text2vec-base-multilingual:
     hf_id: shibing624/text2vec-base-multilingual
     parameters_billions: 0.118
@@ -2866,39 +2749,27 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  voyageai/voyage-large-2:
-    hf_id: voyageai/voyage-large-2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1536
-    max_tokens: 16000
+  Mira190/Euler-Legal-Embedding-V1:
+    hf_id: Mira190/Euler-Legal-Embedding-V1
+    parameters_billions: 7.567
+    memory_usage_mb: 15618.0
+    embedding_dimensions: 4096
+    max_tokens: 1536
     scores:
       retrieval: null
-      sts: 0.8263
+      sts: 0.8433
       reranking: null
     score_coverage:
       sts: 0.89
-  voyageai/voyage-code-2:
-    hf_id: voyageai/voyage-code-2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1536
-    max_tokens: 16000
+  BidirLM/BidirLM-1.7B-Embedding:
+    hf_id: BidirLM/BidirLM-1.7B-Embedding
+    parameters_billions: 1.721
+    memory_usage_mb: 3282.0
+    embedding_dimensions: 2048
+    max_tokens: 8192
     scores:
       retrieval: null
-      sts: 0.8263
-      reranking: null
-    score_coverage:
-      sts: 0.89
-  microsoft/harrier-oss-v1-270m:
-    hf_id: microsoft/harrier-oss-v1-270m
-    parameters_billions: 0.268
-    memory_usage_mb: 512.0
-    embedding_dimensions: 640
-    max_tokens: 32768
-    scores:
-      retrieval: null
-      sts: 0.8282
+      sts: 0.8341
       reranking: null
     score_coverage:
       sts: 0.89
@@ -2916,6 +2787,18 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  microsoft/harrier-oss-v1-270m:
+    hf_id: microsoft/harrier-oss-v1-270m
+    parameters_billions: 0.268
+    memory_usage_mb: 512.0
+    embedding_dimensions: 640
+    max_tokens: 32768
+    scores:
+      retrieval: null
+      sts: 0.8282
+      reranking: null
+    score_coverage:
+      sts: 0.89
   encord-team/ebind-full:
     hf_id: encord-team/ebind-full
     parameters_billions: 1.79
@@ -2956,19 +2839,6 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  BAAI/bge-m3:
-    hf_id: BAAI/bge-m3
-    parameters_billions: 0.568
-    memory_usage_mb: 2167.0
-    embedding_dimensions: 1024
-    max_tokens: 8192
-    scores:
-      retrieval: 0.5102
-      sts: 0.8061
-      reranking: null
-    score_coverage:
-      retrieval: 0.6
-      sts: 0.89
   Mihaiii/Squirtle:
     hf_id: Mihaiii/Squirtle
     parameters_billions: 0.016
@@ -2997,17 +2867,19 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  Alibaba-NLP/gte-Qwen1.5-7B-instruct:
-    hf_id: Alibaba-NLP/gte-Qwen1.5-7B-instruct
-    parameters_billions: 7.099
-    memory_usage_mb: 29449.0
-    embedding_dimensions: 4096
-    max_tokens: 32768
+  BAAI/bge-m3:
+    hf_id: BAAI/bge-m3
+    parameters_billions: 0.568
+    memory_usage_mb: 2167.0
+    embedding_dimensions: 1024
+    max_tokens: 8192
     scores:
-      retrieval: null
-      sts: null
+      retrieval: 0.5102
+      sts: 0.8061
       reranking: null
-    score_coverage: {}
+    score_coverage:
+      retrieval: 0.6
+      sts: 0.89
   ibm-granite/granite-embedding-311m-multilingual-r2:
     hf_id: ibm-granite/granite-embedding-311m-multilingual-r2
     parameters_billions: 0.312
@@ -3035,6 +2907,17 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  Alibaba-NLP/gte-Qwen1.5-7B-instruct:
+    hf_id: Alibaba-NLP/gte-Qwen1.5-7B-instruct
+    parameters_billions: 7.099
+    memory_usage_mb: 29449.0
+    embedding_dimensions: 4096
+    max_tokens: 32768
+    scores:
+      retrieval: null
+      sts: null
+      reranking: null
+    score_coverage: {}
   aari1995/German_Semantic_STS_V2:
     hf_id: aari1995/German_Semantic_STS_V2
     parameters_billions: 0.336
@@ -3074,30 +2957,6 @@ models:
       reranking: null
     score_coverage:
       sts: 0.89
-  voyageai/voyage-finance-2:
-    hf_id: voyageai/voyage-finance-2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: null
-      sts: 0.7725
-      reranking: null
-    score_coverage:
-      sts: 1.0
-  voyageai/voyage-2:
-    hf_id: voyageai/voyage-2
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 4000
-    scores:
-      retrieval: null
-      sts: 0.7938
-      reranking: null
-    score_coverage:
-      sts: 1.0
   izhx/udever-bloom-560m:
     hf_id: izhx/udever-bloom-560m
     parameters_billions: 0.559
@@ -3210,19 +3069,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  ibm-granite/granite-embedding-97m-multilingual-r2:
-    hf_id: ibm-granite/granite-embedding-97m-multilingual-r2
-    parameters_billions: 0.097
-    memory_usage_mb: 186.0
-    embedding_dimensions: 384
-    max_tokens: 8192
-    scores:
-      retrieval: 0.5009
-      sts: 0.7559
-      reranking: null
-    score_coverage:
-      retrieval: 1.0
-      sts: 0.89
   minishlab/M2V_base_glove_subword:
     hf_id: minishlab/M2V_base_glove_subword
     parameters_billions: 0.103
@@ -3237,6 +3083,19 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
+  ibm-granite/granite-embedding-97m-multilingual-r2:
+    hf_id: ibm-granite/granite-embedding-97m-multilingual-r2
+    parameters_billions: 0.097
+    memory_usage_mb: 186.0
+    embedding_dimensions: 384
+    max_tokens: 8192
+    scores:
+      retrieval: 0.5009
+      sts: 0.7559
+      reranking: null
+    score_coverage:
+      retrieval: 1.0
+      sts: 0.89
   deepvk/USER-base:
     hf_id: deepvk/USER-base
     parameters_billions: 0.427
@@ -3443,18 +3302,6 @@ models:
       reranking: null
     score_coverage:
       retrieval: 0.6
-  voyageai/voyage-3.5:
-    hf_id: voyageai/voyage-3.5
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: null
-      sts: 0.7869
-      reranking: null
-    score_coverage:
-      sts: 0.89
   silma-ai/silma-embeddding-matryoshka-v0.1:
     hf_id: silma-ai/silma-embeddding-matryoshka-v0.1
     parameters_billions: 0.135
@@ -3483,20 +3330,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  Hum-Works/lodestone-base-4096-v1:
-    hf_id: Hum-Works/lodestone-base-4096-v1
-    parameters_billions: 0.137
-    memory_usage_mb: null
-    embedding_dimensions: 768
-    max_tokens: null
-    scores:
-      retrieval: 0.3474
-      sts: 0.7422
-      reranking: 0.454
-    score_coverage:
-      retrieval: 0.6
-      sts: 0.89
-      reranking: 1.0
   Omartificial-Intelligence-Space/Arabert-all-nli-triplet-Matryoshka:
     hf_id: Omartificial-Intelligence-Space/Arabert-all-nli-triplet-Matryoshka
     parameters_billions: 0.135
@@ -3510,6 +3343,20 @@ models:
     score_coverage:
       retrieval: 1.0
       sts: 1.0
+      reranking: 1.0
+  Hum-Works/lodestone-base-4096-v1:
+    hf_id: Hum-Works/lodestone-base-4096-v1
+    parameters_billions: 0.137
+    memory_usage_mb: null
+    embedding_dimensions: 768
+    max_tokens: null
+    scores:
+      retrieval: 0.3474
+      sts: 0.7422
+      reranking: 0.454
+    score_coverage:
+      retrieval: 0.6
+      sts: 0.89
       reranking: 1.0
   ai-forever/sbert_large_mt_nlu_ru:
     hf_id: ai-forever/sbert_large_mt_nlu_ru
@@ -3609,18 +3456,6 @@ models:
       retrieval: 1.0
       sts: 1.0
       reranking: 1.0
-  geevec-ai/geevec-embeddings-1.0:
-    hf_id: geevec-ai/geevec-embeddings-1.0
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 4096
-    max_tokens: 32768
-    scores:
-      retrieval: 0.6876
-      sts: null
-      reranking: null
-    score_coverage:
-      retrieval: 1.0
   McGill-NLP/LLM2Vec-Sheared-LLaMA-mntp-unsup-simcse:
     hf_id: McGill-NLP/LLM2Vec-Sheared-LLaMA-mntp-unsup-simcse
     parameters_billions: 1.295
@@ -3635,14 +3470,14 @@ models:
       retrieval: 0.6
       sts: 0.89
       reranking: 1.0
-  infly/inf-retriever-v1:
-    hf_id: infly/inf-retriever-v1
-    parameters_billions: 7.069
-    memory_usage_mb: 13483.0
-    embedding_dimensions: 3584
+  geevec-ai/geevec-embeddings-1.0:
+    hf_id: geevec-ai/geevec-embeddings-1.0
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 4096
     max_tokens: 32768
     scores:
-      retrieval: 0.6407
+      retrieval: 0.6876
       sts: null
       reranking: null
     score_coverage:
@@ -3659,6 +3494,18 @@ models:
       reranking: null
     score_coverage:
       sts: 0.89
+  infly/inf-retriever-v1:
+    hf_id: infly/inf-retriever-v1
+    parameters_billions: 7.069
+    memory_usage_mb: 13483.0
+    embedding_dimensions: 3584
+    max_tokens: 32768
+    scores:
+      retrieval: 0.6407
+      sts: null
+      reranking: null
+    score_coverage:
+      retrieval: 1.0
   geevec-ai/geevec-embeddings-1.0-lite:
     hf_id: geevec-ai/geevec-embeddings-1.0-lite
     parameters_billions: 0.366
@@ -3973,17 +3820,6 @@ models:
       reranking: null
     score_coverage:
       retrieval: 0.6
-  voyageai/voyage-3-large:
-    hf_id: voyageai/voyage-3-large
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: null
-      sts: null
-      reranking: null
-    score_coverage: {}
   MongoDB/mdbr-leaf-ir:
     hf_id: MongoDB/mdbr-leaf-ir
     parameters_billions: 0.023
@@ -4065,32 +3901,10 @@ models:
       sts: null
       reranking: null
     score_coverage: {}
-  voyageai/voyage-3.5 (output_dtype=int8):
-    hf_id: voyageai/voyage-3.5 (output_dtype=int8)
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: null
-      sts: null
-      reranking: null
-    score_coverage: {}
   NeuML/pubmedbert-base-embeddings-2M:
     hf_id: NeuML/pubmedbert-base-embeddings-2M
     parameters_billions: 0.002
     memory_usage_mb: 7.0
-    embedding_dimensions: 64
-    max_tokens: null
-    scores:
-      retrieval: null
-      sts: null
-      reranking: null
-    score_coverage: {}
-  NeuML/pubmedbert-base-embeddings-1M:
-    hf_id: NeuML/pubmedbert-base-embeddings-1M
-    parameters_billions: 0.001
-    memory_usage_mb: 2.0
     embedding_dimensions: 64
     max_tokens: null
     scores:
@@ -4109,23 +3923,12 @@ models:
       sts: null
       reranking: null
     score_coverage: {}
-  voyageai/voyage-3.5 (output_dtype=binary):
-    hf_id: voyageai/voyage-3.5 (output_dtype=binary)
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32000
-    scores:
-      retrieval: null
-      sts: null
-      reranking: null
-    score_coverage: {}
-  voyageai/voyage-multimodal-3:
-    hf_id: voyageai/voyage-multimodal-3
-    parameters_billions: null
-    memory_usage_mb: null
-    embedding_dimensions: 1024
-    max_tokens: 32768
+  NeuML/pubmedbert-base-embeddings-1M:
+    hf_id: NeuML/pubmedbert-base-embeddings-1M
+    parameters_billions: 0.001
+    memory_usage_mb: 2.0
+    embedding_dimensions: 64
+    max_tokens: null
     scores:
       retrieval: null
       sts: null
@@ -4137,6 +3940,17 @@ models:
     memory_usage_mb: 30.0
     embedding_dimensions: 256
     max_tokens: null
+    scores:
+      retrieval: null
+      sts: null
+      reranking: null
+    score_coverage: {}
+  McGill-NLP/AfriE5-Large-instruct:
+    hf_id: McGill-NLP/AfriE5-Large-instruct
+    parameters_billions: 0.56
+    memory_usage_mb: 1068.0
+    embedding_dimensions: 1024
+    max_tokens: 514
     scores:
       retrieval: null
       sts: null
@@ -4264,6 +4078,17 @@ models:
       sts: null
       reranking: null
     score_coverage: {}
+  Omartificial-Intelligence-Space/Arabic-Triplet-Matryoshka-V2:
+    hf_id: Omartificial-Intelligence-Space/Arabic-Triplet-Matryoshka-V2
+    parameters_billions: 0.135
+    memory_usage_mb: 516.0
+    embedding_dimensions: 768
+    max_tokens: 768
+    scores:
+      retrieval: null
+      sts: null
+      reranking: null
+    score_coverage: {}
   openai/text-embedding-ada-002:
     hf_id: openai/text-embedding-ada-002
     parameters_billions: null
@@ -4281,17 +4106,6 @@ models:
     memory_usage_mb: 2166.0
     embedding_dimensions: 1024
     max_tokens: 8192
-    scores:
-      retrieval: null
-      sts: null
-      reranking: null
-    score_coverage: {}
-  Omartificial-Intelligence-Space/Arabic-Triplet-Matryoshka-V2:
-    hf_id: Omartificial-Intelligence-Space/Arabic-Triplet-Matryoshka-V2
-    parameters_billions: 0.135
-    memory_usage_mb: 516.0
-    embedding_dimensions: 768
-    max_tokens: 768
     scores:
       retrieval: null
       sts: null
@@ -4374,3 +4188,170 @@ models:
       sts: null
       reranking: null
     score_coverage: {}
+  mongodb/voyage-large-2-instruct:
+    hf_id: mongodb/voyage-large-2-instruct
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 16000
+    scores:
+      retrieval: null
+      sts: 0.8281
+      reranking: 0.5009
+    score_coverage:
+      sts: 1.0
+      reranking: 1.0
+  mongodb/voyage-law-2:
+    hf_id: mongodb/voyage-law-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 16000
+    scores:
+      retrieval: null
+      sts: 0.8342
+      reranking: null
+    score_coverage:
+      sts: 0.89
+  mongodb/voyage-large-2:
+    hf_id: mongodb/voyage-large-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1536
+    max_tokens: 16000
+    scores:
+      retrieval: null
+      sts: 0.8263
+      reranking: null
+    score_coverage:
+      sts: 0.89
+  mongodb/voyage-3.5:
+    hf_id: mongodb/voyage-3.5
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 32000
+    scores:
+      retrieval: null
+      sts: 0.7869
+      reranking: null
+    score_coverage:
+      sts: 0.89
+  mongodb/voyage-3:
+    hf_id: mongodb/voyage-3
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 32000
+    scores:
+      retrieval: 0.5346
+      sts: 0.7859
+      reranking: 0.4672
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  mongodb/voyage-3-lite:
+    hf_id: mongodb/voyage-3-lite
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 512
+    max_tokens: 32000
+    scores:
+      retrieval: 0.503
+      sts: 0.772
+      reranking: 0.462
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  mongodb/voyage-2:
+    hf_id: mongodb/voyage-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 4000
+    scores:
+      retrieval: null
+      sts: 0.7938
+      reranking: null
+    score_coverage:
+      sts: 1.0
+  mongodb/voyage-code-3:
+    hf_id: mongodb/voyage-code-3
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 32000
+    scores:
+      retrieval: null
+      sts: 0.8238
+      reranking: null
+    score_coverage:
+      sts: 1.0
+  mongodb/voyage-multilingual-2:
+    hf_id: mongodb/voyage-multilingual-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 32000
+    scores:
+      retrieval: 0.5599
+      sts: 0.7698
+      reranking: 0.474
+    score_coverage:
+      retrieval: 0.7
+      sts: 1.0
+      reranking: 1.0
+  RiverRider/motherlode-code-small-en-v0.1:
+    hf_id: RiverRider/motherlode-code-small-en-v0.1
+    parameters_billions: 0.033
+    memory_usage_mb: 127.0
+    embedding_dimensions: 384
+    max_tokens: 512
+    scores:
+      retrieval: 0.5055
+      sts: 0.8189
+      reranking: 0.4664
+    score_coverage:
+      retrieval: 1.0
+      sts: 1.0
+      reranking: 1.0
+  mongodb/voyage-code-2:
+    hf_id: mongodb/voyage-code-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1536
+    max_tokens: 16000
+    scores:
+      retrieval: null
+      sts: 0.8263
+      reranking: null
+    score_coverage:
+      sts: 0.89
+  mongodb/voyage-finance-2:
+    hf_id: mongodb/voyage-finance-2
+    parameters_billions: null
+    memory_usage_mb: null
+    embedding_dimensions: 1024
+    max_tokens: 32000
+    scores:
+      retrieval: null
+      sts: 0.7725
+      reranking: null
+    score_coverage:
+      sts: 1.0
+  mongodb/voyage-3-m-exp:
+    hf_id: mongodb/voyage-3-m-exp
+    parameters_billions: 6.918
+    memory_usage_mb: null
+    embedding_dimensions: 2048
+    max_tokens: 32000
+    scores:
+      retrieval: 0.7261
+      sts: 0.8396
+      reranking: 0.4831
+    score_coverage:
+      retrieval: 0.6
+      sts: 1.0
+      reranking: 1.0
