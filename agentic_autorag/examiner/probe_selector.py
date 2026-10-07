@@ -284,7 +284,7 @@ def select_probe_configs(
                 "reranker_top_n": reranker_top_n_min,
                 "generator_llm": tier1_llm,
                 "reasoning": _reasoning_for(tier1_llm),
-                "temperature": 0.0,
+                "temperature": ss.temperature.min,
             },
         ),
         (
@@ -300,7 +300,7 @@ def select_probe_configs(
                 "reranker_top_n": reranker_top_n_min,
                 "generator_llm": tier2_llm,
                 "reasoning": _reasoning_for(tier2_llm),
-                "temperature": 0.0,
+                "temperature": ss.temperature.min,
             },
         ),
         (
@@ -316,7 +316,7 @@ def select_probe_configs(
                 "reranker_top_n": reranker_top_n_mid,
                 "generator_llm": tier3_llm,
                 "reasoning": _reasoning_for(tier3_llm),
-                "temperature": 0.0,
+                "temperature": ss.temperature.min,
             },
         ),
         (
@@ -334,7 +334,7 @@ def select_probe_configs(
                 "reranker_top_n": reranker_top_n_max,
                 "generator_llm": tier4_llm,
                 "reasoning": _reasoning_for(tier4_llm),
-                "temperature": 0.0,
+                "temperature": ss.temperature.min,
             },
         ),
     ]

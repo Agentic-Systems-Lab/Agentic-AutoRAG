@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from agentic_autorag.config.models import OpenEndedQuestion, ProjectConfig, TrialConfig
+from agentic_autorag.config.models import NumericRange, OpenEndedQuestion, ProjectConfig, TrialConfig
 from agentic_autorag.examiner.evaluator import ExamResult, QuestionResult
 from agentic_autorag.examiner.probe_selector import (
     ALL_WRONG_EXAM_CAP,
@@ -165,6 +165,12 @@ class TestSelectProbeConfigs:
             assert p.generator_llm in ss.all_llm_models()
             assert p.embedding_model in ss.embedding.models
             assert ss.chunking.chunk_token_size.min <= p.chunk_token_size <= ss.chunking.chunk_token_size.max
+
+    def test_probes_use_lowest_temperature_in_search_space(self) -> None:
+        config = _make_config()
+        config.search_space.temperature = NumericRange(min=1.0, max=1.0)
+        probes = select_probe_configs(config)
+        assert all(tc.temperature == 1.0 for _, tc in probes)
 
     def test_max_four_probes(self) -> None:
         config = _make_config()
