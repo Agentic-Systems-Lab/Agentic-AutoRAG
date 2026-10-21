@@ -2,11 +2,27 @@
   <img src="https://raw.githubusercontent.com/Agentic-Systems-Lab/Agentic-AutoRAG/HEAD/assets/Agentic_AutoRAG.png" alt="Agentic AutoRAG">
 </p>
 
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.08452"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2610.08452-b31b1b.svg"></a>
+  <a href="https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-blue.svg">
+</p>
+
 # Agentic AutoRAG
 
 Agentic AutoRAG is a reasoning-driven optimizer for Retrieval-Augmented Generation (RAG) pipelines. Instead of grid search or Bayesian optimization, it runs a two-stage LLM agent loop: a diagnoser analyses why a trial configuration fails, and a proposer chooses what to change next from that diagnosis and the history of prior trials. The optimization signal is a synthetic exam, open-ended questions with ground-truth answers generated from your corpus on the first run and cached for reuse. Retrieval is database-agnostic: vector, hybrid BM25 plus vector, and, as an experimental option, graph or hybrid graph plus vector.
 
+## News
+
+- **2026-10:** The paper is on [arXiv](https://arxiv.org/abs/2610.08452).
+- **2026-09:** Accepted at the REALM workshop at EMNLP 2026 and the ML for Systems workshop at NeurIPS 2026.
+
 ## How it works
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Agentic-Systems-Lab/Agentic-AutoRAG/HEAD/assets/architecture-dark.png">
+  <img alt="Architecture of Agentic AutoRAG" src="https://raw.githubusercontent.com/Agentic-Systems-Lab/Agentic-AutoRAG/HEAD/assets/architecture-light.png">
+</picture>
 
 1. **Exam generation.** On the first run the examiner model reads your corpus and writes an exam of typed questions (extraction, definitional, inference, bridge, comparison, and two numeric types) paired with answers grounded in verbatim source spans. Every question is validated and run through a ladder of probe pipelines, and the exam keeps the questions that separate weak configurations from strong ones. The exam is cached to `exam.json`.
 2. **Reasoning loop.** Each trial builds the proposed pipeline and evaluates it against the exam. The diagnoser explains why the configuration scored as it did (retrieval misses versus generation errors, which question types failed). The proposer then picks the next configuration from the diagnosis, the full trial history, and a knowledge base of model benchmarks and prices.
@@ -93,6 +109,20 @@ Everything is written under `meta.output_dir`. The files you will read are `opti
 ## Reproducing the paper
 
 Benchmark repository: [lassebaerlandstrand/Agentic-AutoRAG-Bench](https://github.com/lassebaerlandstrand/Agentic-AutoRAG-Bench)
+
+## Citation
+
+```bibtex
+@misc{strand2026agenticautorag,
+  title         = {Agentic AutoRAG: RAG Pipeline Optimization through Reasoning-Driven Agents},
+  author        = {Lasse B. Strand and Robert Jakob and Kevin O'Sullivan and Markus Kreft},
+  year          = {2026},
+  eprint        = {2610.08452},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL},
+  url           = {https://arxiv.org/abs/2610.08452}
+}
+```
 
 ## License
 

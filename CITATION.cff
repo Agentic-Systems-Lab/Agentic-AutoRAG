@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use Agentic AutoRAG in your research, we would appreciate a citation of the paper below."
+title: "Agentic AutoRAG"
+authors:
+  - family-names: Strand
+    given-names: Lasse B.
+  - family-names: Jakob
+    given-names: Robert
+  - family-names: O'Sullivan
+    given-names: Kevin
+  - family-names: Kreft
+    given-names: Markus
+repository-code: "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Agentic AutoRAG: RAG Pipeline Optimization through Reasoning-Driven Agents"
+  authors:
+    - family-names: Strand
+      given-names: Lasse B.
+    - family-names: Jakob
+      given-names: Robert
+    - family-names: O'Sullivan
+      given-names: Kevin
+    - family-names: Kreft
+      given-names: Markus
+  year: 2026
+  journal: "arXiv preprint arXiv:2610.08452"
+  url: "https://arxiv.org/abs/2610.08452"

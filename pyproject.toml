@@ -57,6 +57,7 @@ agentic-autorag = "agentic_autorag.cli:app"
 Homepage = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG"
 Repository = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG"
 Issues = "https://github.com/Agentic-Systems-Lab/Agentic-AutoRAG/issues"
+Paper = "https://arxiv.org/abs/2610.08452"
 
 [project.optional-dependencies]
 dev = [
