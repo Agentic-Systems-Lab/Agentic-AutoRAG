@@ -17,7 +17,7 @@ from agentic_autorag.config.reasoning_mode import select_pair as _select_reasoni
 
 logger = logging.getLogger(__name__)
 
-_KB_DIR = Path(__file__).parent.parent.parent / "knowledge_base"
+_KB_DIR = Path(__file__).parent.parent / "knowledge_base"
 _GRAPH_PARAM_NAMES = frozenset({"graph_query_mode", "graph_top_k"})
 
 _DIRECT_VENDOR_PROVIDERS = frozenset({"anthropic", "openai", "gemini", "vertex_ai"})

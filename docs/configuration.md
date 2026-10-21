@@ -120,7 +120,7 @@ Two checks run before the first trial. If a model string is not in the LiteLLM c
 
 ## The knowledge base
 
-The optimizer does not choose models blind. `knowledge_base/` holds benchmark scores, prices, throughput, and context limits for several hundred LLMs, retrieval and reranking scores for several hundred embedding models, a curated table of rerankers, and a description of every search-space parameter. The agent sees the rows for the models in your search space, and the exam generator uses the same rankings to build its probe ladder.
+The optimizer does not choose models blind. `agentic_autorag/knowledge_base/` holds benchmark scores, prices, throughput, and context limits for several hundred LLMs, retrieval and reranking scores for several hundred embedding models, a curated table of rerankers, and a description of every search-space parameter. The agent sees the rows for the models in your search space, and the exam generator uses the same rankings to build its probe ladder.
 
 You do not edit the knowledge base to add a model. Add the model string to the search space and the matching row is looked up by name. A model without a row still appears to the agent, without scores. Rerankers outside the curated table have no scores and are ranked last for probes.
 

@@ -13,7 +13,7 @@ Usage:
   uv run python scripts/build_knowledge_base.py
   uv run python scripts/build_knowledge_base.py --llm-only
   uv run python scripts/build_knowledge_base.py --embedding-only
-  uv run python scripts/build_knowledge_base.py --output-dir knowledge_base/
+  uv run python scripts/build_knowledge_base.py --output-dir agentic_autorag/knowledge_base/
   uv run python scripts/build_knowledge_base.py --refresh-aa-cache  # force re-fetch
   uv run python scripts/build_knowledge_base.py --use-cache-only    # skip API entirely
 
@@ -262,7 +262,7 @@ def build_llm_knowledge_base(
     refresh_aa_cache: bool = False,
     use_cache_only: bool = False,
 ) -> None:
-    """Fetch AA + LiteLLM data and write knowledge_base/llms.yaml."""
+    """Fetch AA + LiteLLM data and write agentic_autorag/knowledge_base/llms.yaml."""
     cache_path = output_dir / AA_CACHE_FILENAME
     aa_models = _load_aa_models(api_key, cache_path, refresh=refresh_aa_cache, cache_only=use_cache_only)
     all_litellm_ids = _load_litellm_ids()
@@ -417,7 +417,7 @@ def _embedding_entry(
 
 
 def build_embedding_knowledge_base(output_dir: Path) -> None:
-    """Fetch MTEB results and write knowledge_base/embeddings.yaml."""
+    """Fetch MTEB results and write agentic_autorag/knowledge_base/embeddings.yaml."""
     import mteb  # noqa: PLC0415
 
     logger.info("Loading MTEB benchmark results…")
@@ -496,7 +496,7 @@ def build_embedding_knowledge_base(output_dir: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build Agentic AutoRAG knowledge base YAML files.")
-    parser.add_argument("--output-dir", default="knowledge_base", help="Directory to write YAML files")
+    parser.add_argument("--output-dir", default="agentic_autorag/knowledge_base", help="Directory to write YAML files")
     parser.add_argument("--llm-only", action="store_true", help="Only build llms.yaml")
     parser.add_argument("--embedding-only", action="store_true", help="Only build embeddings.yaml")
     parser.add_argument("--aa-api-key", default=None, help="Artificial Analysis API key (overrides env var)")

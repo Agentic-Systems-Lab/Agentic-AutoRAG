@@ -237,7 +237,7 @@ ignore-folder/
 experiments-*/
 
 # Knowledge base cache (built artifact, not checked in)
-knowledge_base/_aa_response_cache.json
+agentic_autorag/knowledge_base/_aa_response_cache.json
 
 # Local-only configs — only *_example.yaml ship with the library
 configs/*

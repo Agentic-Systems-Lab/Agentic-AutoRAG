@@ -9,8 +9,12 @@ import shutil
 from pathlib import Path
 
 import typer
+from dotenv import find_dotenv, load_dotenv
 
-from agentic_autorag.litellm_runtime import configure_litellm_runtime
+# Before importing litellm, so this .env takes precedence over the one litellm finds.
+load_dotenv(find_dotenv(usecwd=True))
+
+from agentic_autorag.litellm_runtime import configure_litellm_runtime  # noqa: E402
 
 app = typer.Typer(name="agentic-autorag", help="Agentic AutoRAG Optimizer")
 
